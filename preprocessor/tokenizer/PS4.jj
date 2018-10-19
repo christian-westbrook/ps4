@@ -1,0 +1,174 @@
+//=================================================================================================
+// Program		: 
+// Class		: PS4.jj
+// Developers	: Renae Fisher
+// Abstract		:
+//=================================================================================================
+
+options
+{
+	static = false;
+}
+
+PARSER_BEGIN(PS4Tokenizer)
+
+import java.io.*;
+import java.util.Random;
+
+public class PS4Tokenizer
+{
+	public static void main(String[] args) throws ParseException, IOException
+  	{
+		if(args.length != 1)
+		{
+			System.out.println("ERROR: Invalid arguments specified\n");
+			System.out.println("Please run this program with the following syntax: java PS4Tokenizer.java <path of input dir>");
+			System.exit(1);
+		}
+		else
+		{
+			File indir = new File(args[0]);
+			File testOutDir = new File("./test-data/");
+			File trainOutDir = new File("./train-data/");
+
+			if(!testOutDir.exists())
+				testOutDir.mkdir();
+			
+			if(!trainOutDir.exists())
+				trainOutDir.mkdir();
+
+			File[] files = indir.listFiles();
+
+			for(File file : files)
+				tokenize(file, testOutDir, trainOutDir);
+		}
+  	}
+
+  	private static void tokenize(File input, File testOutDir, File trainOutDir) throws ParseException, IOException
+  	{
+		BufferedReader br = new BufferedReader(new FileReader(input));
+		PS4Tokenizer u = new PS4Tokenizer(br);
+  		Token t;
+
+		// Provide correct format for directories
+		
+		String testOutPath = testOutDir.getName();
+		if(testOutPath.charAt(testOutPath.length() - 1) != '/')
+			testOutPath = testOutPath + "/";
+			
+		String trainOutPath = trainOutDir.getName();
+		if(trainOutPath.charAt(trainOutPath.length() - 1) != '/')
+			trainOutPath = trainOutPath + "/";
+	
+		// Create test-data output
+	
+		String testOutputName = testOutPath + input.getName() + ".out";
+  		File testOutput = new File(testOutputName);
+		
+		if(testOutput.exists())
+			testOutput.delete();
+			
+  		testOutput.createNewFile();
+  		BufferedWriter bw1 = new BufferedWriter(new FileWriter(testOutput));
+		
+		// Create training-data output
+		
+		String trainOutputName = trainOutPath + input.getName() + "2.out";
+  		File trainOutput = new File(trainOutputName);
+		
+		if(trainOutput.exists())
+			trainOutput.delete();
+  	
+  		trainOutput.createNewFile();
+  		BufferedWriter bw2 = new BufferedWriter(new FileWriter(trainOutput));
+		
+		// We'll use Random to select % of a file. 
+		// In this case, when we roll 1, we'll the line to test. Otherwise, we'll the line as tokens write to training.
+		// We'd write roughly 20% of the data to test and roughly 80% of the data to training.
+		// This would work better for larger data sets than smaller data sets.
+		
+		Random rand = new Random();
+		boolean gate = true;
+		int roll = 0;
+
+		do {
+
+			t = u.getNextToken();
+		
+			if(gate) {
+				roll = rand.nextInt(5)+1;
+				gate = false;
+			}
+			
+			if(roll == 1) {
+			
+				if(PS4Tokenizer.tokenImage[ t.kind ].equalsIgnoreCase("<NEWLINE>")) {
+					
+					bw1.write(t.image);
+					gate = true;
+					
+				} else {
+					bw1.write(t.image.toLowerCase() + " ");
+				}
+				
+			} else {
+			
+				if(PS4Tokenizer.tokenImage[ t.kind ].equalsIgnoreCase("<NEWLINE>")) {
+					
+					gate = true;
+					
+				} else {
+
+					bw2.write(t.image.toLowerCase() + "\n");
+				}
+				
+			}
+		
+		} while ( t.kind != PS4TokenizerConstants.EOF );
+
+  		br.close();
+  		bw1.close();
+		bw2.close();
+		
+  	}
+}
+
+PARSER_END(PS4Tokenizer)
+
+TOKEN_MGR_DECLS : {
+	
+}
+
+SKIP : {
+
+  < SPACE : (" "|"\\s")+ >
+| < CR : ("\r")+ >
+| < TAB : ("\t")+ >
+| < OPERATOR : ["+","-","*","/"]|("&gt;") >
+| < PUNCTUATION : (","|"?"|"!"|":"|"'"|"-"|"."|"&"|"/")+>
+| < SPECIAL_ENTITY : ("&"(["a"-"z","A"-"Z"])+";"|"&#"(["0"-"9"])+";") >
+
+}
+
+// Skip tokens that are probably not relevant.
+
+SKIP : {
+  
+  < EMAIL: (["a"-"z","A"-"Z","0"-"9"])+"@"((".")?["a"-"z","A"-"Z","0"-"9"])+ >
+| < DOMAIN : "@"((".")?["a"-"z","A"-"Z"])+ >
+| < PHONE_NUMBER :  (("(")?["0"-"9"]["0"-"9"]["0"-"9"](")")?(< SPACE >|"-"|".")+)+["0"-"9"]["0"-"9"]["0"-"9"]["0"-"9"] >
+| < EQUATION : ((["0"-"9"])+(< SPACE >)?(< OPERATOR >)?(< SPACE >)?)+(< SPACE >)?("="(< SPACE >)?(["0"-"9"](".")?)+)? >
+| < NUMBER      : ((".")?(["0"-"9"])+(",")?)+ >
+
+}
+
+// We're specifically looking for words.
+
+TOKEN : {
+
+  < WORD2 : (["a"-"z","A"-"Z"])+"'"(["a"-"z","A"-"Z"])+ >
+| < WORD  : (["a"-"z","A"-"Z"])+ >
+| < NEWLINE : ("\n")+ >
+| < MISC  : ~[] >
+
+}
