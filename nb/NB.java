@@ -37,15 +37,16 @@ public class NB {
 		String tmp;
 		
 		double prob = 0.0;
+		double prior = 0.0;
 		
 		for(int i = 0; i < words.length - 1; i++) {
 			
 			tmp = words[i] + " " + words[i + 1];
 			
-			prob += ( hm.get(tmp) + 1 ) / ( metricN + metricV );
+			prob += Math.log10( ( hm.get(tmp) + 1 ) / ( metricN + metricV ) );
 			
 		}
 		
-		return prob;
+		return prob + prior;
 	}
 }
