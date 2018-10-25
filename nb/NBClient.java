@@ -13,12 +13,15 @@ public class NBClient
 		
 		try
 		{
-			ServerSocket socket = new ServerSocket(port);
+			ServerSocket serverSocket = new ServerSocket(port);
 			Socket clientSocket = serverSocket.accept();
 			
 			BufferedReader inServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			String input = inServer.readLine();
 			System.out.println(input);
+			
+			serverSocket.close();
+			clientSocket.close();
 		}
 		catch (ConnectException ex)
 		{
