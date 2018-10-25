@@ -6,4 +6,8 @@ function submit()
 	{
 		document.write(input);
 	}
+	else
+	{
+		document.write("test");
+	}
 }
