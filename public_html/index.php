@@ -4,9 +4,9 @@
 </head>
 
 <body>
-<form action="#" method="post" onsubmit="submitEvent();">
+<form action="#" method="post" onsubmit="return submitEvent()">
 	Input:<br>
-	<input type="text" name="input"><br>
+	<input type="text" id="input" name="input"><br>
 	<input type="checkbox" name="NB" checked> Naive Bayes<br>
 	<input type="checkbox" name="LR"> Logistic Regression<br>
 	<input type="submit" value="Send">	
