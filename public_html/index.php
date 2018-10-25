@@ -1,7 +1,3 @@
-<?php
-
-?>
-
 <form onsubmit="submit()" method="post">
 	Input:<br>
 	<input type="text" id="input"><br>
@@ -10,14 +6,15 @@
 	<input type="submit" value="Send">	
 </form>
 
-<script type="text/javascript">
+function submit()
+{
 	var input = document.getElementById("input").value;
 	
 	if(input !== null)
 	{
 		document.write(input);
 	}
-</script>
+}
 
 
 
