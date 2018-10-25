@@ -11,7 +11,7 @@
 </form>
 
 <script type="text/javascript">
-	var input = document.getElementById("input");
+	var input = document.getElementById("input").value;
 	
 	if(input !== null)
 	{
