@@ -48,7 +48,7 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
 
                 // Create test-data output
 
-                String testOutputName = testOutPath + input.getName() + ".out";
+                String testOutputName = testOutPath +"test-"+ input.getName() + ".out";
                 File testOutput = new File(testOutputName);
 
                 if(testOutput.exists())
@@ -59,7 +59,7 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
 
                 // Create training-data output
 
-                String trainOutputName = trainOutPath + input.getName() + "2.out";
+                String trainOutputName = trainOutPath +"train-"+ input.getName() + ".out";
                 File trainOutput = new File(trainOutputName);
 
                 if(trainOutput.exists())
