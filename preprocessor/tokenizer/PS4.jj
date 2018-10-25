@@ -82,30 +82,30 @@ public class PS4Tokenizer
   		trainOutput.createNewFile();
   		BufferedWriter bw2 = new BufferedWriter(new FileWriter(trainOutput));
 		
-		// We'll use Random to select % of a file. 
-		// In this case, when we roll 1, we'll the line to test. Otherwise, we'll the line as tokens write to training.
-		// We'd write roughly 20% of the data to test and roughly 80% of the data to training.
-		// This would work better for larger data sets than smaller data sets.
-		
+		// Every five items, we pick on line at random to be written to test-data or training-data.
+        // We may either write the entire line as is, or write it to a tokens file.
+        
 		Random rand = new Random();
-		boolean gate = true;
+		boolean rollNext = true;
+        boolean newline;
 		int roll = 0;
+        int step = 1;
 
 		do {
 
-			t = u.getNextToken();
-		
-			if(gate) {
+            t = u.getNextToken();
+            newline = PS4Tokenizer.tokenImage[ t.kind ].equalsIgnoreCase("<NEWLINE>");
+            
+            if(rollNext) {
 				roll = rand.nextInt(5)+1;
-				gate = false;
+				rollNext = false;
 			}
+
+			if(step == roll) {
 			
-			if(roll == 1) {
-			
-				if(PS4Tokenizer.tokenImage[ t.kind ].equalsIgnoreCase("<NEWLINE>")) {
+				if(newline) {
 					
-					bw1.write(t.image);
-					gate = true;
+					bw1.write("\n");
 					
 				} else {
 					bw1.write(t.image.toLowerCase() + " ");
@@ -113,16 +113,24 @@ public class PS4Tokenizer
 				
 			} else {
 			
-				if(PS4Tokenizer.tokenImage[ t.kind ].equalsIgnoreCase("<NEWLINE>")) {
+				if(!newline) {
 					
-					gate = true;
-					
-				} else {
-
 					bw2.write(t.image.toLowerCase() + "\n");
+					
 				}
 				
 			}
+			
+			if(newline) {
+
+                step++;
+                
+                if(step == 6) {
+                    step = 1;
+                    rollNext = true;
+                }
+                
+            }
 		
 		} while ( t.kind != PS4TokenizerConstants.EOF );
 
@@ -142,8 +150,8 @@ TOKEN_MGR_DECLS : {
 SKIP : {
 
   < SPACE : (" "|"\\s")+ >
-| < CR : ("\r")+ >
 | < TAB : ("\t")+ >
+| < CR : ("\r")+ >
 | < OPERATOR : ["+","-","*","/"]|("&gt;") >
 | < PUNCTUATION : (","|"?"|"!"|":"|"'"|"-"|"."|"&"|"/")+>
 | < SPECIAL_ENTITY : ("&"(["a"-"z","A"-"Z"])+";"|"&#"(["0"-"9"])+";") >
@@ -168,7 +176,7 @@ TOKEN : {
 
   < WORD2 : (["a"-"z","A"-"Z"])+"'"(["a"-"z","A"-"Z"])+ >
 | < WORD  : (["a"-"z","A"-"Z"])+ >
-| < NEWLINE : ("\n")+ >
+| < NEWLINE : ("\n"|("?"|"!"|"."))+ >
 | < MISC  : ~[] >
 
 }

@@ -11,9 +11,9 @@ public interface PS4TokenizerConstants {
   /** RegularExpression Id. */
   int SPACE = 1;
   /** RegularExpression Id. */
-  int CR = 2;
+  int TAB = 2;
   /** RegularExpression Id. */
-  int TAB = 3;
+  int CR = 3;
   /** RegularExpression Id. */
   int OPERATOR = 4;
   /** RegularExpression Id. */
@@ -46,8 +46,8 @@ public interface PS4TokenizerConstants {
   String[] tokenImage = {
     "<EOF>",
     "<SPACE>",
-    "<CR>",
     "<TAB>",
+    "<CR>",
     "<OPERATOR>",
     "<PUNCTUATION>",
     "<SPECIAL_ENTITY>",

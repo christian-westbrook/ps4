@@ -68,30 +68,30 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
                 trainOutput.createNewFile();
                 BufferedWriter bw2 = new BufferedWriter(new FileWriter(trainOutput));
 
-                // We'll use Random to select % of a file. 
-                // In this case, when we roll 1, we'll the line to test. Otherwise, we'll the line as tokens write to training.
-                // We'd write roughly 20% of the data to test and roughly 80% of the data to training.
-                // This would work better for larger data sets than smaller data sets.
+                // Every five items, we pick on line at random to be written to test-data or training-data.
+        // We may either write the entire line as is, or write it to a tokens file.
 
                 Random rand = new Random();
-                boolean gate = true;
+                boolean rollNext = true;
+        boolean newline;
                 int roll = 0;
+        int step = 1;
 
                 do {
 
-                        t = u.getNextToken();
+            t = u.getNextToken();
+            newline = PS4Tokenizer.tokenImage[ t.kind ].equalsIgnoreCase("<NEWLINE>");
 
-                        if(gate) {
+            if(rollNext) {
                                 roll = rand.nextInt(5)+1;
-                                gate = false;
+                                rollNext = false;
                         }
 
-                        if(roll == 1) {
+                        if(step == roll) {
 
-                                if(PS4Tokenizer.tokenImage[ t.kind ].equalsIgnoreCase("<NEWLINE>")) {
+                                if(newline) {
 
-                                        bw1.write(t.image);
-                                        gate = true;
+                                        bw1.write("\u005cn");
 
                                 } else {
                                         bw1.write(t.image.toLowerCase() + " ");
@@ -99,16 +99,24 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
 
                         } else {
 
-                                if(PS4Tokenizer.tokenImage[ t.kind ].equalsIgnoreCase("<NEWLINE>")) {
-
-                                        gate = true;
-
-                                } else {
+                                if(!newline) {
 
                                         bw2.write(t.image.toLowerCase() + "\u005cn");
+
                                 }
 
                         }
+
+                        if(newline) {
+
+                step++;
+
+                if(step == 6) {
+                    step = 1;
+                    rollNext = true;
+                }
+
+            }
 
                 } while ( t.kind != PS4TokenizerConstants.EOF );
 
