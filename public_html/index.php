@@ -2,7 +2,7 @@
 <script src="/js/submit-event.js"></script>	
 </head>
 
-<form onsubmit="submit()" method="post">
+<form action="#" method="post" onsubmit="submit()">
 	Input:<br>
 	<input type="text" id="input"><br>
 	<input type="checkbox" name="NB" value="NB" checked> Naive Bayes<br>
