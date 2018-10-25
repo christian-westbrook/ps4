@@ -1,4 +1,4 @@
-function submit()
+function submitEvent()
 {
 	var input = document.getElementById("input").value;
 	
