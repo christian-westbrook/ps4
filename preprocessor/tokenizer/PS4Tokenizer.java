@@ -120,6 +120,13 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
 
                 } while ( t.kind != PS4TokenizerConstants.EOF );
 
+        /*
+        if(roll > step) {
+         
+            System.out.println("TRUE!");
+        
+        }*/
+
                 br.close();
                 bw1.close();
                 bw2.close();

@@ -126,55 +126,58 @@ public class MapBuilder {
 			// Iterate through lines in the tokens file
 			String line = "";
 			while((line = br.readLine()) != null) {
-				
-                q.add(line.toLowerCase());
-            
-                // Discard words at the head of the queue if we exceed the size
-                if(q.size() > size) {
-            
-                    q.remove();
-            
-                }
-            
-                // Start to save ngrams when we have enough to build a full one
-                if(q.size() == size) {
-                
-                    StringBuilder sb = new StringBuilder();
-                    int len = 0;
-                
-                    for(String w : q) {
-                
-                        sb.append(w);
-                    
-                        if(len < q.size() - 1) {
-                            sb.append(" ");
-                        }
-                
-                        if(mapList.get(len).get(sb.toString()) == null) {
 
-                            mapList.get(len).put(sb.toString(),1);
-                            metrics[len][1]++; //V
+                if(line.length() > 0) {
                     
-                        } else {
+                    q.add(line.toLowerCase());
                     
-                            freq = mapList.get(len).get(sb.toString());
-                            freq++;
-                            mapList.get(len).put(sb.toString(),freq);
-                            metrics[len][0]++; //N
-                    
-                        }
-                
-                        if(debug) {
-                        
-                            bwTest[len].write(sb.toString());
-                            bwTest[len].write("\n");
-                        
-                        }
-
-                        len++;
-                
+                    // Discard words at the head of the queue if we exceed the size
+                    if(q.size() > size) {
+            
+                        q.remove();
+            
                     }
+            
+                    // Start to save ngrams when we have enough to build a full one
+                    if(q.size() == size) {
+                
+                        StringBuilder sb = new StringBuilder();
+                        int len = 0;
+                
+                        for(String w : q) {
+                
+                            sb.append(w);
+                    
+                            if(len < q.size() - 1) {
+                                sb.append(" ");
+                            }
+                
+                            if(mapList.get(len).get(sb.toString()) == null) {
+
+                                mapList.get(len).put(sb.toString(),1);
+                                metrics[len][1]++; //V
+                    
+                            } else {
+                    
+                                freq = mapList.get(len).get(sb.toString());
+                                freq++;
+                                mapList.get(len).put(sb.toString(),freq);
+                                metrics[len][0]++; //N
+                    
+                            }
+                
+                            if(debug) {
+                        
+                                bwTest[len].write(len+" "+sb.toString());
+                                bwTest[len].write("\n");
+                        
+                            }
+
+                            len++;
+                
+                        }
  
+                    }
                 }
             } 
 		
