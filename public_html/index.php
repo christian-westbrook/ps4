@@ -1,15 +1,5 @@
 <head>
-<script type="text/javascript">
-	function submit()
-	{
-		var input = document.getElementById("input").value;
-	
-		if(input !== null)
-		{
-			document.write(input);
-		}
-	}
-	</script>
+<script src="/js/submit-event.js"></script>	
 </head>
 
 <form onsubmit="submit()" method="post">
