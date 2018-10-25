@@ -1,6 +1,6 @@
 <head>
 <title>PS4</title>
-<script src="/js/submit-event.js"></script>	
+<script src="./js/submit-event.js"></script>	
 </head>
 
 <form action="#" method="post" onsubmit="return submit()">
