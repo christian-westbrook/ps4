@@ -5,6 +5,7 @@ $in = $_POST['input'];
 
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 $result = socket_connect($socket, $address, $port);
+echo "HERE";
 socket_write($socket, $in  . "\r\n", strlen($in . "\r\n"));
 socket_close($socket);
 
