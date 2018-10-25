@@ -13,8 +13,8 @@ public class NBClient
 		
 		try
 		{
-			socket = new Socket(IP, port);
-			inServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			Socket socket = new Socket(IP, port);
+			BufferedReader inServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			String input = inServer.readLine();
 		}
 		catch (ConnectException ex)
