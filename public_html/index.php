@@ -4,7 +4,7 @@
 </head>
 
 <body>
-<form action="#" method="post" onsubmit="return submitEvent()">
+<form action="#" method="post" onsubmit="submitEvent()">
 	Input:<br>
 	<input type="text" id="input" name="input"><br>
 	<input type="checkbox" name="NB" checked> Naive Bayes<br>
