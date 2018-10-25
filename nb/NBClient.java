@@ -1,4 +1,5 @@
 import java.net.Socket;
+import java.net.ServerSocket;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -8,14 +9,16 @@ public class NBClient
 {
 	public NBClient()
 	{
-		String IP = "localhost";
 		int port = 5000;
 		
 		try
 		{
-			Socket socket = new Socket(IP, port);
-			BufferedReader inServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			ServerSocket socket = new ServerSocket(port);
+			Socket clientSocket = serverSocket.accept();
+			
+			BufferedReader inServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			String input = inServer.readLine();
+			System.out.println(input);
 		}
 		catch (ConnectException ex)
 		{
