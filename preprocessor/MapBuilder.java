@@ -29,25 +29,26 @@ public class MapBuilder {
 	private int n;
 	private int v;
 	
-	private boolean debug = true;
+	private boolean debug = false;
+	
+	// PRIOR neg, pos, neutral ... of documents with class c / N of total documents (sentences) .
 	
 	public MapBuilder(){
 
-        // Access data from tokenizer
-        File indir = new File("./tokenizer/train-data/");
-		File[] files = indir.listFiles();
+        // See if directories exist prior to writing data
+        
+        String[] d = {"./data/","./data/maps","./data/metrics/"};
+        File dir;
+        
+        for(int i = 0; i < d.length; i++) {
+        
+            dir = new File(d[i]);
+            
+            if(!dir.exists())
+                dir.mkdir();
+        
+        }
 
-		// See if directories exist prior to writing data
-		File dir = new File("./data/maps/");
-            
-        if(!dir.exists())
-            dir.mkdir();
-            
-        dir = new File("./data/metrics/");
-            
-        if(!dir.exists())
-            dir.mkdir();
-            
         if(debug) {
         
             File nGramDir = new File("./ngrams/");
@@ -56,6 +57,10 @@ public class MapBuilder {
                 nGramDir.mkdir();
         
         }
+        
+        // Access data from tokenizer
+        File indir = new File("./tokenizer/train-data/");
+		File[] files = indir.listFiles();
             
         // Cycle through data, building maps from positive, neutral, & negative files.
 		
@@ -202,6 +207,27 @@ public class MapBuilder {
         }
 		
     }
+	
+	public void TFIDF(HashMap<String, Integer> hm) {
+	
+        Iterator it = hm.entrySet().iterator();
+        int freq;
+        int score;
+        
+        // STORE THEM, USE QUARTILES TO FIND MIDDLE ZONE.
+        // Occurence of term i in a document j * log( number of documents in collection / number of documents containing i )
+        
+        while(it.hasNext()) {
+        
+            Map.Entry pair = (Map.Entry)it.next();
+            
+            freq = pair.getValue();
+            
+            //score = hm.get(pair.getKey()) * 
+        
+        }
+	
+	}
 	
 	private void writeMap(HashMap<String,Integer> hm, String outputName, int num) {
 		
