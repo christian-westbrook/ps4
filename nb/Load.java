@@ -36,13 +36,13 @@ public class Load {
             File indir = new File("./preprocessor/data/");
             File[] files = indir.listFiles();
             
-            mapList = new HashMap<HashMap<String,Integer>>(seed);
+            mapTable = new HashMap<String,HashMap<String,Integer>>(seed);
             
             for(File file : files) {
             
                 tmp = file.getName().split("-");
                 
-                lable = tmp[1] + " " tmp[2];
+                lable = tmp[1] + " " + tmp[2];
             
                 fis = new FileInputStream(file);
                 ois = new ObjectInputStream(fis);
@@ -74,10 +74,26 @@ public class Load {
     }
 
     // Getters
-    public HashMap getHashMap(String lable) {
-        return mapList.get(lable);
+    public HashMap<String,Integer> getHashMap(String lable) {
+        return mapTable.get(lable);
     }
-
+    
+    public HashMap<String,Integer> getPosBMap() {
+    
+        return getHashMap("positive 2");
+    }
+    
+    public HashMap<String,Integer> getNeuBMap() {
+    
+        return getHashMap("neutral 2");
+    }
+    
+    public HashMap getNegBMap() {
+    
+        return getHashMap("negative 2");
+    }
+    
+    /*
     public int getN() {
         return n;
     }
@@ -85,5 +101,6 @@ public class Load {
     public int getV() {
         return v;
     }
+    */
 
 }

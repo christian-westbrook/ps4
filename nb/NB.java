@@ -3,11 +3,17 @@ import java.util.HashMap;
 public class NB {
 	
 	static HashMap<String, Integer> bigramPos;
-	static HashMap<String, Integer> bigramNeg;	
-	static HashMap<String, Integer> bigramNeu;	
+	static HashMap<String, Integer> bigramNeg;
+	static HashMap<String, Integer> bigramNeu;
 	
 	public static STO calc(STO sto)
 	{
+        Load l = new Load();
+        
+        bigramPos = l.getPosBMap();
+        bigramNeg = l.getNegBMap();
+        bigramNeu = l.getNeuBMap();
+	
 		sto.setPos(getProb(bigramPos, sto.getInput()));
 		sto.setNeg(getProb(bigramNeg, sto.getInput()));
 		sto.setNeu(getProb(bigramNeu, sto.getInput()));

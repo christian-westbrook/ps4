@@ -5,105 +5,147 @@
 // Abstract		: This class is used to build HashMaps that are used for Naive Bayes classification
 //=================================================================================================
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.File;
-import java.util.HashMap;
-import java.io.ObjectOutputStream;
 import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
+import java.io.ObjectOutputStream;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Iterator;
+import java.util.Stack;
 
 public class MapBuilder {
 	
 	private ArrayList<HashMap<String,Integer>> mapList;
+	private HashMap<String, Integer> stats;
+    //private Stack<String> fileStack;
+    //private Stack<Integer> lineStack;
+	
     private int size = 2;
 	private int seed = 5000;
+
+	private int[][] classMetrics;
+	private int[][] allMetrics;
+
+    private int allLines;
+
+	// Prior = Lines with class c / All lines
 	
-	private int[][] metrics;
-	private int n;
-	private int v;
-	
-	private boolean debug = false;
-	
-	// PRIOR neg, pos, neutral ... of documents with class c / N of total documents (sentences) .
-	
+	private boolean debug = true;
+
 	public MapBuilder(){
 
-        // See if directories exist prior to writing data
+        try {
         
-        String[] d = {"./data/","./data/maps","./data/metrics/"};
-        File dir;
-        
-        for(int i = 0; i < d.length; i++) {
-        
-            dir = new File(d[i]);
-            
-            if(!dir.exists())
-                dir.mkdir();
-        
-        }
+            // Load stats from tokenizer & create stacks for metric processing
 
-        if(debug) {
-        
-            File nGramDir = new File("./ngrams/");
-        
-            if(!nGramDir.exists())
-                nGramDir.mkdir();
-        
-        }
-        
-        // Access data from tokenizer
-        File indir = new File("./tokenizer/train-data/");
-		File[] files = indir.listFiles();
-            
-        // Cycle through data, building maps from positive, neutral, & negative files.
-		
-		String[] outputName;
-		int ind = 0;
-		n = 0;
-        v = 0;
-		
-		for(File file : files) {
-			
-			outputName = file.getName().split("\\.");
+            FileInputStream fis = new FileInputStream(new File("./tokenizer/stats/stats.map"));
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            stats = (HashMap<String, Integer>)ois.readObject();
+            ois.close();
 
-			// Create maps & metrics for a partiuclar file
-            mapList = new ArrayList<HashMap<String,Integer>>(size);
-		
-            for(int i = 0; i < size; i++) {
+            //fileStack = new Stack<>();
+            //lineStack = new Stack<>();
+            
+            // See if directories exist prior to writing data
         
-                mapList.add(i,new HashMap<String,Integer>(seed));
+            String[] d = {"./data/","./data/maps","./data/metrics/"};
+            setupOutputDirs(d);
+
+            if(debug) {
+        
+                File nGramDir = new File("./ngrams/");
+        
+                if(!nGramDir.exists())
+                    nGramDir.mkdir();
         
             }
+        
+            // Access data from tokenizer
             
-            metrics = new int[size][2];
+            File indir = new File("./tokenizer/train-data/");
+            File[] files = indir.listFiles();
+            
+            // Cycle through data, building maps from positive, neutral, & negative files.
+		
+            String[] outputName;
+            int ind = 0;
+            allMetrics = new int[size][3];
+            allLines = 0;
+        
+            for(File file : files) {
+        
+                // Create maps for a partiuclar file
+                
+                mapList = new ArrayList<HashMap<String,Integer>>(size);
+		
+                for(int i = 0; i < size; i++) {
+        
+                    mapList.add(i,new HashMap<String,Integer>(seed));
+        
+                }
+            
+                // Create metrics for a particular file
+                
+                classMetrics = new int[size][3];
 			
-			mapBuilder(file, outputName[0]);
+                // Build maps
+			
+                outputName = file.getName().split("\\.");
+                mapBuilder(file, outputName[0]);
 
-			// Write the maps to disk
-			for(int i = 0; i < mapList.size(); i++) {
-			
-                writeMap(mapList.get(i),outputName[0],i);
-                computeMetrics(metrics[i][0],metrics[i][1]);
-                writeMetrics(metrics[i][0],metrics[i][1],outputName[0],i);
-			
-			}
-			
-			writeMetrics(n,v,"all",-1);
+                // Write the maps to disk, along with metrics
+                
+                for(int i = 0; i < mapList.size(); i++) {
 
-			ind++;
-		}
+                    writeMap(mapList.get(i), outputName[0]+"-"+(i+1) );
+                    
+                    classMetrics[i][2] = stats.get(file.getName());
+                    
+                    writeMetrics(classMetrics[i], outputName[0]+"-metrics-"+(i+1) );
+			
+                }
+
+                // Add up line count for all files.
+
+                allLines += stats.get(file.getName());
+
+                //fileStack.push(file.getName());
+                //lineStack.push(stats.get(file.getName()));
+
+                ind++;
+                
+            }
+            
+            // Write "global" metrics, such as n, v, & prior.
+
+            for(int i = 0; i < size; i++) {
+            
+                allMetrics[i][2] = allLines;
+                writeMetrics(allMetrics[i], "train-all-metrics-"+(i+1) );
+            
+            }
+        
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            System.exit(1);
+        }
 
 	}
 
     private void mapBuilder(File tokens, String outputName) {
-		
+
 		try {
 
 			// Open the tokens file
@@ -127,7 +169,7 @@ public class MapBuilder {
             Queue<String> q = new LinkedList<>();
 
             int freq;
-			
+
 			// Iterate through lines in the tokens file
 			String line = "";
 			while((line = br.readLine()) != null) {
@@ -160,20 +202,24 @@ public class MapBuilder {
                             if(mapList.get(len).get(sb.toString()) == null) {
 
                                 mapList.get(len).put(sb.toString(),1);
-                                metrics[len][1]++; //V
+                                
+                                classMetrics[len][1]++; //V
+                                allMetrics[len][1]++;
                     
                             } else {
                     
                                 freq = mapList.get(len).get(sb.toString());
                                 freq++;
                                 mapList.get(len).put(sb.toString(),freq);
-                                metrics[len][0]++; //N
-                    
+
                             }
+                            
+                            classMetrics[len][0]++; //N
+                            allMetrics[len][0]++;
                 
                             if(debug) {
                         
-                                bwTest[len].write(len+" "+sb.toString());
+                                bwTest[len].write(sb.toString());
                                 bwTest[len].write("\n");
                         
                             }
@@ -184,7 +230,8 @@ public class MapBuilder {
  
                     }
                 }
-            } 
+                
+            }
 		
             br.close();
 		
@@ -207,33 +254,35 @@ public class MapBuilder {
         }
 		
     }
-	
+
+    /*
 	public void TFIDF(HashMap<String, Integer> hm) {
 	
         Iterator it = hm.entrySet().iterator();
         int freq;
         int score;
         
-        // STORE THEM, USE QUARTILES TO FIND MIDDLE ZONE.
+        // STORE THEM, USE QUARTILES TO FIND MIDDLE ZONE?
         // Occurence of term i in a document j * log( number of documents in collection / number of documents containing i )
         
         while(it.hasNext()) {
         
             Map.Entry pair = (Map.Entry)it.next();
             
-            freq = pair.getValue();
+            freq = (int) pair.getValue();
             
             //score = hm.get(pair.getKey()) * 
-        
+            
+            
         }
-	
-	}
-	
-	private void writeMap(HashMap<String,Integer> hm, String outputName, int num) {
-		
+
+	}*/
+
+	private void writeMap(HashMap<String,Integer> hm, String outputName) {
+
 		try {
 
-            File f = new File("./data/maps/"+outputName+"-"+(num+1)+".map");
+            File f = new File("./data/maps/"+outputName+".map");
 
             f.createNewFile();
             FileOutputStream fos = new FileOutputStream(f);
@@ -245,33 +294,49 @@ public class MapBuilder {
 			ex.printStackTrace();
 			System.exit(1);
 		}
-		
+
 	}
-	
-	private void computeMetrics(int n2, int v2) {
-		n += n2;
-		v += v2;
-	}
-	
-	private void writeMetrics(int n, int v, String outputName, int num) {
-	
+
+	private void writeMetrics(int[] metrics, String outputName) {
+
         try {
 
-            // Write metrics to disk
-			File mFile = new File("./data/metrics/"+outputName+"-metrics-"+(num+1)+".dat");
+            // Write class metrics to disk
+            
+			File mFile = new File("./data/metrics/"+outputName+".dat");
 			mFile.createNewFile();
 			FileWriter mfw = new FileWriter(mFile);
 			BufferedWriter mbw = new BufferedWriter(mfw);
-			mbw.write(n +","+ v + "\n");
-			mbw.close();
 			
+			for(int i = 0; i < metrics.length; i++) {
+			
+                mbw.write(metrics[i]+",");
+			
+			}
+			
+			mbw.close();
+
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			System.exit(1);
 		}
-	
+
 	}
-	
+
+	private static void setupOutputDirs(String[] dirNames) {
+ 
+        for(int i = 0; i < dirNames.length; i++) {
+         
+            File dir = new File(dirNames[i]);
+            
+            if(!dir.exists()) {
+                dir.mkdir();
+            }
+            
+        }
+        
+    }
+
 	public static void main(String[] args) {
 		new MapBuilder();
 	}
