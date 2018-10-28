@@ -32,7 +32,7 @@ public class MapBuilder {
     //private Stack<String> fileStack;
     //private Stack<Integer> lineStack;
 	
-    private int size = 2;
+    private int size = 1;
 	private int seed = 5000;
 
 	private int[][] classMetrics;
