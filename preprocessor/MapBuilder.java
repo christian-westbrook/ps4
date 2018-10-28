@@ -48,7 +48,7 @@ public class MapBuilder {
 
         try {
         
-            // Load stats from tokenizer & create stacks for metric processing
+            // Load stats from tokenizer
 
             FileInputStream fis = new FileInputStream(new File("./tokenizer/stats/stats.map"));
             ObjectInputStream ois = new ObjectInputStream(fis);
@@ -129,7 +129,8 @@ public class MapBuilder {
             }
             
             // Write "global" metrics, such as n, v, & prior.
-
+            // NOTE: CALCULATION FOR V IS PROBABLY WAY OFF.
+            
             for(int i = 0; i < size; i++) {
             
                 allMetrics[i][2] = allLines;
@@ -232,19 +233,19 @@ public class MapBuilder {
                 }
                 
             }
-		
+    
             br.close();
-		
+    
             if(debug) {
-			
+        
                 for(int i = 0; i < bwTest.length; i++) {
                 
                     bwTest[i].close();
                 
                 }
-			
+        
             }
-		
+    
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
             System.exit(1);
@@ -252,7 +253,7 @@ public class MapBuilder {
             ex.printStackTrace();
             System.exit(1);
         }
-		
+    
     }
 
     /*

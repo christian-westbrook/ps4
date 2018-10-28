@@ -2,6 +2,8 @@
 import java.io.*;
 import java.util.Random;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Iterator;
 
 /** Token Manager. */
 public class PS4TokenizerTokenManager implements PS4TokenizerConstants

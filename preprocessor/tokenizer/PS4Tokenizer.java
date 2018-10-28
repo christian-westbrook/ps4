@@ -2,10 +2,16 @@
 import java.io.*;
 import java.util.Random;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Iterator;
 
 public class PS4Tokenizer implements PS4TokenizerConstants {
 
     static HashMap <String, Integer> stats;
+    static HashMap <String, Double> sentFreq;
+    static HashMap <String, Integer> sent;
+    static int seed = 5000;
+    static boolean debug = true;
 
         public static void main(String[] args) throws ParseException, IOException {
 
@@ -21,12 +27,14 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
                         File[] files = indir.listFiles();
 
             stats = new HashMap<String, Integer>(files.length * 2);
+            sentFreq = new HashMap<String, Double>(seed);
+            sent = new HashMap<String,Integer>(50);
 
                         for(File file : files) {
                                 tokenize(file, dirNames[0], dirNames[1]);
             }
 
-            // Write stats to disk.
+            // Write stats & sentence freq to disk.
 
             File f = new File("./stats/stats.map");
 
@@ -35,6 +43,36 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
             ObjectOutputStream foos = new ObjectOutputStream(fos);
             foos.writeObject(stats);
             foos.close();
+
+            f = new File("./stats/sent-freq.map");
+
+            f.createNewFile();
+            fos = new FileOutputStream(f);
+            foos = new ObjectOutputStream(fos);
+            foos.writeObject(stats);
+            foos.close();
+
+            // Write frequencies to disk
+
+            if(debug) {
+
+                BufferedWriter bw = new BufferedWriter(new FileWriter("./stats/sent-freq.txt"));
+
+                Iterator it = sentFreq.entrySet().iterator();
+                Map.Entry pair;
+
+                while (it.hasNext()) {
+
+                    pair = (Map.Entry)it.next();
+
+                    bw.write(pair.getKey() + " " + pair.getValue());
+                    bw.write("\u005cn");
+
+                }
+
+                bw.close();
+
+            }
 
                 } else {
                         System.out.println("ERROR: Invalid arguments specified\u005cn");
@@ -99,6 +137,15 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
         // Count the numer of lines, which is used in further calculations.
         int count = 0;
 
+        // Variables used in sent calcuations.
+        Iterator it;
+        Map.Entry pair;
+        String key;
+        String tmp;
+        int wordCount = 0;
+        double tf = 0.0;
+        int freq = 0;
+
                 do {
 
             t = u.getNextToken();
@@ -110,6 +157,8 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
                         }
 
                         if(step == roll) {
+
+                // If we're on select line, write it to test data.
 
                                 if(newline) {
 
@@ -123,7 +172,26 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
 
                                 if(!newline) {
 
-                                        bw2.write(t.image.toLowerCase() + "\u005cn");
+                    tmp = t.image.toLowerCase();
+
+                    if(tmp.length() > 0) {
+
+                        bw2.write(tmp + "\u005cn");
+
+                        // Count the frequency of the word, then increment the word count.
+
+                        if(sent.get(tmp) == null) {
+                            sent.put(tmp,1);
+                        } else {
+                            freq = sent.get(tmp);
+                            freq++;
+
+                            sent.put(tmp,freq);
+                        }
+
+                        wordCount++;
+
+                    }
 
                                 }
 
@@ -131,12 +199,16 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
 
                         if(newline) {
 
+                // Change step increment & roll to select a random line for test data.
+
                 step++;
 
                 if(step == 6) {
                     step = 1;
                     rollNext = true;
                 }
+
+                // Count the number of lines / sentences in the file.
 
                 if( p != null ) {
 
@@ -149,6 +221,33 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
                     count++;
 
                 }
+
+                // Calc the tf for each word in a sentence, then add it to the prior result for that word.
+
+                it = sent.entrySet().iterator();
+
+                while (it.hasNext()) {
+
+                    pair = (Map.Entry)it.next();
+
+                    key = pair.toString().split("=")[0];
+
+                    tf = Integer.parseInt(pair.toString().split("=")[1]) / ((double)wordCount);
+
+                    if(sentFreq.get(key) == null) {
+
+                        sentFreq.put(key,tf);
+
+                    } else {
+
+                        tf += sentFreq.get(key);
+                        sentFreq.put(key,tf);
+
+                    }
+                }
+
+                sent.clear();
+                wordCount = 0;
 
             }
 

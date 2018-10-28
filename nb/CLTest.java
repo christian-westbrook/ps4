@@ -2,12 +2,12 @@
 public class CLTest {
 
     public static void main(String[] args) {
-
-        NB nb = new NB();
-        
+  
         if(args != null) {
         
-            if(args.length > 1) {
+            if(args.length >= 1) {
+            
+                NB nb = new NB();
             
                 // Build a space delimited input String from the command line arguments.
             
