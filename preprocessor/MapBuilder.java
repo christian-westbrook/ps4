@@ -23,15 +23,12 @@ import java.util.Queue;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Iterator;
-import java.util.Stack;
 
 public class MapBuilder {
 	
 	private ArrayList<HashMap<String,Integer>> mapList;
 	private HashMap<String, Integer> stats;
-    //private Stack<String> fileStack;
-    //private Stack<Integer> lineStack;
-	
+
     private int size = 1;
 	private int seed = 5000;
 
@@ -39,24 +36,26 @@ public class MapBuilder {
 	private int[][] allMetrics;
 
     private int allLines;
+    private int allWords;
 
-	// Prior = Lines with class c / All lines
-	
 	private boolean debug = true;
 
 	public MapBuilder(){
 
         try {
         
-            // Load stats from tokenizer
+            // Load data calculated during tokenization.
+            // We'll use this for tf-idf, or for metrics in further calculations.
 
             FileInputStream fis = new FileInputStream(new File("./tokenizer/stats/stats.map"));
             ObjectInputStream ois = new ObjectInputStream(fis);
             stats = (HashMap<String, Integer>)ois.readObject();
             ois.close();
-
-            //fileStack = new Stack<>();
-            //lineStack = new Stack<>();
+            
+            BufferedReader br = new BufferedReader(new FileReader("./tokenizer/stats/stats.dat"));
+            allWords = Integer.parseInt(br.readLine());
+            allLines = Integer.parseInt(br.readLine());
+            br.close();
             
             // See if directories exist prior to writing data
         
@@ -65,28 +64,29 @@ public class MapBuilder {
 
             if(debug) {
         
-                File nGramDir = new File("./ngrams/");
+                File f = new File("./ngrams/");
         
-                if(!nGramDir.exists())
-                    nGramDir.mkdir();
+                if(!f.exists())
+                    f.mkdir();
         
             }
         
             // Access data from tokenizer
             
-            File indir = new File("./tokenizer/train-data/");
+            File indir = new File("./tokenizer/tokens/");
             File[] files = indir.listFiles();
             
             // Cycle through data, building maps from positive, neutral, & negative files.
 		
             String[] outputName;
-            int ind = 0;
             allMetrics = new int[size][3];
-            allLines = 0;
+        
+            // NOTE : MAPS AND METRICS FILES ARE MADE NEW FOR EACH FILE, THEN OVERWRITTEN IN MEMORY.
+            // SIZE REFERS TO THE SIZE OF THE NGRAMS.
         
             for(File file : files) {
         
-                // Create maps for a partiuclar file
+                // Create a list of maps for a partiuclar file, based on ngram size
                 
                 mapList = new ArrayList<HashMap<String,Integer>>(size);
 		
@@ -96,44 +96,34 @@ public class MapBuilder {
         
                 }
             
-                // Create metrics for a particular file
+                // Create an array of metrics for a particular file
                 
                 classMetrics = new int[size][3];
 			
                 // Build maps
 			
                 outputName = file.getName().split("\\.");
+                
                 mapBuilder(file, outputName[0]);
 
-                // Write the maps to disk, along with metrics
+                // Write the maps and metrics to disk.
                 
                 for(int i = 0; i < mapList.size(); i++) {
 
-                    writeMap(mapList.get(i), outputName[0]+"-"+(i+1) );
-                    
+                    writeMap( mapList.get(i), outputName[0]+"-"+(i+1) );
                     classMetrics[i][2] = stats.get(file.getName());
-                    
-                    writeMetrics(classMetrics[i], outputName[0]+"-metrics-"+(i+1) );
+                    writeMetrics( classMetrics[i], outputName[0]+"-metrics-"+(i+1) );
 			
                 }
-
-                // Add up line count for all files.
-
-                allLines += stats.get(file.getName());
-
-                //fileStack.push(file.getName());
-                //lineStack.push(stats.get(file.getName()));
-
-                ind++;
                 
             }
             
-            // Write "global" metrics, such as n, v, & prior.
-            // NOTE: CALCULATION FOR V IS PROBABLY WAY OFF.
-            
+            // Write "universal" metrics, such as n, v, & total sentence count for prior.
+
             for(int i = 0; i < size; i++) {
             
                 allMetrics[i][2] = allLines;
+                allMetrics[i][1] = allWords;
                 writeMetrics(allMetrics[i], "train-all-metrics-"+(i+1) );
             
             }
@@ -150,8 +140,8 @@ public class MapBuilder {
 		try {
 
 			// Open the tokens file
-			BufferedReader br = new BufferedReader(new FileReader(tokens));
 			
+			BufferedReader br = new BufferedReader(new FileReader(tokens));
 			BufferedWriter bwTest[] = null;
 			
 			if(debug) {
@@ -167,11 +157,12 @@ public class MapBuilder {
 			}
             
             // Use a queue to store previous words.
+            
             Queue<String> q = new LinkedList<>();
-
             int freq;
 
 			// Iterate through lines in the tokens file
+			
 			String line = "";
 			while((line = br.readLine()) != null) {
 
@@ -180,6 +171,7 @@ public class MapBuilder {
                     q.add(line.toLowerCase());
                     
                     // Discard words at the head of the queue if we exceed the size
+                    
                     if(q.size() > size) {
             
                         q.remove();
@@ -187,6 +179,7 @@ public class MapBuilder {
                     }
             
                     // Start to save ngrams when we have enough to build a full one
+                    
                     if(q.size() == size) {
                 
                         StringBuilder sb = new StringBuilder();
@@ -203,9 +196,7 @@ public class MapBuilder {
                             if(mapList.get(len).get(sb.toString()) == null) {
 
                                 mapList.get(len).put(sb.toString(),1);
-                                
                                 classMetrics[len][1]++; //V
-                                allMetrics[len][1]++;
                     
                             } else {
                     
@@ -257,24 +248,52 @@ public class MapBuilder {
     }
 
     /*
-	public void TFIDF(HashMap<String, Integer> hm) {
+	public void TFIDF(HashMap<String, Integer> hm) throws IOException {
 	
+        BufferedWriter bw = null;
         Iterator it = hm.entrySet().iterator();
-        int freq;
-        int score;
+        String key;
+        double tf;
+        double score;
+        double alpha = 0.05;
+
+        if(debug) {
+
+            bw = new BufferedWriter(new FileWriter("./tf-idf.txt",true));
+            
+        }
         
-        // STORE THEM, USE QUARTILES TO FIND MIDDLE ZONE?
+        // Future idea: Store frequencies, select terms
         // Occurence of term i in a document j * log( number of documents in collection / number of documents containing i )
         
         while(it.hasNext()) {
         
             Map.Entry pair = (Map.Entry)it.next();
+            key = (String)pair.getKey();
             
-            freq = (int) pair.getValue();
+            tf = (double)wordFreq.get(key);
+
+            score = tf * (int)Math.log10( ((double)allLines) / (int)sentFreq.get(key) );
             
-            //score = hm.get(pair.getKey()) * 
+            if(debug) {
             
+                bw.write(score + " " + key+"\n");
             
+            }
+
+            //hm.put(key,(int)score);
+
+            it.remove();
+            
+            if(score < alpha) {
+                hm.remove(key);
+                // CONSIDER HOW THIS WOULD AFFECT METRICS, SUCH AS V, SENTENCE COUNT, ETC.
+            }
+
+        }
+        
+        if(debug){
+            bw.close();
         }
 
 	}*/

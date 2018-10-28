@@ -23,5 +23,6 @@ for ((i=0; i < ${#files[@]} ; i++)); do
 
 done
 
-#cat train-negative-1.txt train-neutral-1.txt train-positive-1.txt > "./test-output/all.txt"
-#sort "./test-output/all.txt" | uniq -c | sort -nr > "./test-output/freq-all.txt"
+cat train-negative-1.txt train-neutral-1.txt train-positive-1.txt > "./test-output/all.txt"
+sort "./test-output/all.txt" | uniq -c | sort -nr > "./test-output/freq-all.txt"
+wc -l "./test-output/freq-all.txt"

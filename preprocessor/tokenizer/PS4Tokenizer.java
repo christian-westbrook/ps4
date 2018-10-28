@@ -8,30 +8,35 @@ import java.util.Iterator;
 public class PS4Tokenizer implements PS4TokenizerConstants {
 
     static HashMap <String, Integer> stats;
-    static HashMap <String, Double> sentFreq;
-    static HashMap <String, Integer> sent;
     static int seed = 5000;
-    static boolean debug = true;
+    static boolean debug = false;
+    static int allWords;
+    static int allLines;
 
         public static void main(String[] args) throws ParseException, IOException {
 
         if(args.length == 1) {
 
-            String[] dirNames = {"./test-data/","./train-data/","./stats/"};
+            String[] dirNames = {"./tokens/","./stats/"};
 
             // Create directories for test data, training data, and stats.
+
             setupOutputDirs(dirNames);
 
             // Begin to tokenize each file.
+
             File indir = new File(args[0]);
                         File[] files = indir.listFiles();
 
             stats = new HashMap<String, Integer>(files.length * 2);
-            sentFreq = new HashMap<String, Double>(seed);
-            sent = new HashMap<String,Integer>(50);
+
+            // Used to count the number of distinct words, and number of lines, accross all files.
+
+            allWords = 0;
+            allLines = 0;
 
                         for(File file : files) {
-                                tokenize(file, dirNames[0], dirNames[1]);
+                                tokenize(file, "./tokens/");
             }
 
             // Write stats & sentence freq to disk.
@@ -44,35 +49,13 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
             foos.writeObject(stats);
             foos.close();
 
-            f = new File("./stats/sent-freq.map");
+            File mFile = new File("./stats/stats.dat");
+                        mFile.createNewFile();
+                        BufferedWriter mbw = new BufferedWriter(new FileWriter(mFile));
+                        mbw.write(allWords+"\u005cn");
+            mbw.write(allLines+"\u005cn");
+                        mbw.close();
 
-            f.createNewFile();
-            fos = new FileOutputStream(f);
-            foos = new ObjectOutputStream(fos);
-            foos.writeObject(stats);
-            foos.close();
-
-            // Write frequencies to disk
-
-            if(debug) {
-
-                BufferedWriter bw = new BufferedWriter(new FileWriter("./stats/sent-freq.txt"));
-
-                Iterator it = sentFreq.entrySet().iterator();
-                Map.Entry pair;
-
-                while (it.hasNext()) {
-
-                    pair = (Map.Entry)it.next();
-
-                    bw.write(pair.getKey() + " " + pair.getValue());
-                    bw.write("\u005cn");
-
-                }
-
-                bw.close();
-
-            }
 
                 } else {
                         System.out.println("ERROR: Invalid arguments specified\u005cn");
@@ -108,107 +91,47 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
 
     }
 
-        private static void tokenize(File input, String testOutPath, String trainOutPath) throws ParseException, IOException {
+        private static void tokenize(File input, String outPath) throws ParseException, IOException {
 
-        String[] fileNames = {"test-"+input.getName()+".out"
-            ,"train-"+input.getName()+".out"};
-
-                // Create test-data output
-                BufferedWriter bw1 = setupOutputFile(testOutPath+fileNames[0]);
+        String fileName = "train-"+input.getName()+".out";
 
                 // Create training-data output
-                BufferedWriter bw2 = setupOutputFile(trainOutPath+fileNames[1]);
 
-        // Open input file & begen to filter tokens.
+                BufferedWriter bw = setupOutputFile(outPath+fileName);
+
+        // Open input file.
                 BufferedReader br = new BufferedReader(new FileReader(input));
                 PS4Tokenizer u = new PS4Tokenizer(br);
                 Token t;
         Token p = null;
 
-                // Every five items, we pick on line at random to be written to test-data or training-data.
-        // We may either write the entire line as is, or write it to a tokens file.
+        // Count the number of lines for each file, which is used in further calculations.
 
-                Random rand = new Random();
-                boolean rollNext = true;
-        boolean newline;
-                int roll = 0;
-        int step = 1;
-
-        // Count the numer of lines, which is used in further calculations.
-        int count = 0;
-
-        // Variables used in sent calcuations.
-        Iterator it;
-        Map.Entry pair;
         String key;
-        String tmp;
-        int wordCount = 0;
-        double tf = 0.0;
-        int freq = 0;
+        boolean newline;
+        int count = 0;
 
                 do {
 
             t = u.getNextToken();
+
             newline = PS4Tokenizer.tokenImage[ t.kind ].equalsIgnoreCase("<NEWLINE>");
 
-            if(rollNext) {
-                                roll = rand.nextInt(5)+1;
-                                rollNext = false;
-                        }
+            if(!newline) {
 
-                        if(step == roll) {
+                key = t.image.toLowerCase();
 
-                // If we're on select line, write it to test data.
+                if(key.length() > 0) {
 
-                                if(newline) {
+                    bw.write(key + "\u005cn");
 
-                                        bw1.write("\u005cn");
+                }
 
-                                } else {
-                                        bw1.write(t.image.toLowerCase() + " ");
-                                }
-
-                        } else {
-
-                                if(!newline) {
-
-                    tmp = t.image.toLowerCase();
-
-                    if(tmp.length() > 0) {
-
-                        bw2.write(tmp + "\u005cn");
-
-                        // Count the frequency of the word, then increment the word count.
-
-                        if(sent.get(tmp) == null) {
-                            sent.put(tmp,1);
-                        } else {
-                            freq = sent.get(tmp);
-                            freq++;
-
-                            sent.put(tmp,freq);
-                        }
-
-                        wordCount++;
-
-                    }
-
-                                }
-
-                        }
+            }
 
                         if(newline) {
 
-                // Change step increment & roll to select a random line for test data.
-
-                step++;
-
-                if(step == 6) {
-                    step = 1;
-                    rollNext = true;
-                }
-
-                // Count the number of lines / sentences in the file.
+                // Count the number of lines in the file.
 
                 if( p != null ) {
 
@@ -217,37 +140,8 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
                     }
 
                 } else {
-
                     count++;
-
                 }
-
-                // Calc the tf for each word in a sentence, then add it to the prior result for that word.
-
-                it = sent.entrySet().iterator();
-
-                while (it.hasNext()) {
-
-                    pair = (Map.Entry)it.next();
-
-                    key = pair.toString().split("=")[0];
-
-                    tf = Integer.parseInt(pair.toString().split("=")[1]) / ((double)wordCount);
-
-                    if(sentFreq.get(key) == null) {
-
-                        sentFreq.put(key,tf);
-
-                    } else {
-
-                        tf += sentFreq.get(key);
-                        sentFreq.put(key,tf);
-
-                    }
-                }
-
-                sent.clear();
-                wordCount = 0;
 
             }
 
@@ -255,20 +149,13 @@ public class PS4Tokenizer implements PS4TokenizerConstants {
 
                 } while ( t.kind != PS4TokenizerConstants.EOF );
 
-        /*
-        if(roll > step) {
-         
-            System.out.println("TRUE!");
-        
-        }*/
-
         // Save file stats.
 
-        stats.put(fileNames[1],count);
+        allLines += count;
+        stats.put(fileName,count);
 
                 br.close();
-                bw1.close();
-                bw2.close();
+                bw.close();
 
         }
 
