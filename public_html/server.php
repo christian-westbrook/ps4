@@ -29,6 +29,8 @@ echo "[Status] Creating client socket\n";
 // Create the client socket
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 
+echo "HERE";
+
 // Test the client socket
 if($socket === false)
 {
