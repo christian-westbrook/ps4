@@ -39,7 +39,11 @@ fwrite($socket, $in);
 echo "[Status] Receiving message from server connection";
 
 // Receive message from server connection
-$response = fread($socket, 1048);
+$response = "";
+while(!feof($socket)) 
+{
+    $response = $response + fgets($socket, 1024);
+}
 if(!$response)
 {
 	echo "[Error] Failed to receive message from server connection</br>";
