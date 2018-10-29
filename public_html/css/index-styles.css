@@ -1,12 +1,19 @@
 body
 {
-	background: #00FFFF;
+	background: #3a3a3a;
 }
 
-div
+#formdiv
 {
 	margin: auto;
 	width: 30%;
 	border: 3px solid black;
 	padding: 0.5em;
+	padding-bottom: 0em;
+	background: #fff68f;
+}
+
+input
+{
+	padding: 0.25em;
 }
