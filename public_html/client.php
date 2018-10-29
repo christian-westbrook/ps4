@@ -16,9 +16,7 @@ echo "[Status] Message: " . $in . "</br>";
 echo "[Status] Creating client socket</br>";
 
 // Create the client socket
-$conn = "tcp://code.cis.uafs.edu:5000";
-echo "Conn: " . $conn . "</br>";
-$socket = stream_socket_client($conn, $errno, $errstr, 30);
+$socket = stream_socket_client("tcp://code.cis.uafs.edu:5000", $errno, $errstr, 30);
 
 // Test the client socket
 if(!$socket)
@@ -39,7 +37,7 @@ fwrite($socket, $in);
 echo "[Status] Receiving message from server connection</br>";
 
 // Receive message from server connection
-echo fgets($socket, 4096);
+echo fgets($socket, 4096) . "\n";
 
 // Notify the administrator that the connection is being closed
 echo "[Status] Closing connection</br>";
