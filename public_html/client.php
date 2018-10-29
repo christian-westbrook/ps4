@@ -10,18 +10,7 @@ echo "[Status] Initializing</br>";
 $in = $_POST['input'];
 
 // Notify the administrator that the input message has been received
-echo "[Status] Input received</br>";
-echo "         Message: " . $in . "</br>";
-
-// Get the IP address by host name
-$address = gethostbyname("code.cis.uafs.edu");
-
-// Notify the administrator that the host name has been retrieved
-echo "[Status] Retrieved host</br>";
-echo "         Host: " . $address . "</br>";
-
-// Set the port for communication
-$port = "5000";
+echo "[Status] Message: " . $in . "</br>";
 
 // Notify the administrator that the client socket is being created
 echo "[Status] Creating client socket</br>";
@@ -51,7 +40,7 @@ echo "[Status] Receiving message from server connection";
 
 // Receive message from server connection
 $response = fread($socket, 1048);
-echo "Response: " + $response + "</br>";
+echo "[Status] Response: " + $response + "</br>";
 
 // Notify the administrator that the connection is being closed
 echo "[Status] Closing connection</br>";
