@@ -15,7 +15,7 @@
 </head>
 
 <body>
-	<form action="test-server.php" method="post">
+	<form action="server.php" method="post">
 		Input:<br> 
 		<input type="text" name="input"><br>
 	
