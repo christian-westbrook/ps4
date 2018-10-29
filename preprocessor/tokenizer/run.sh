@@ -6,6 +6,6 @@ javacc *.jj
 
 javac *.java
 
-java TFIDF
+java PS4Tokenizer './input-data/'
 
-java PS4Tokenizer './tfidf-data/'
+java TFIDF

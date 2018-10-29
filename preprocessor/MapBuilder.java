@@ -26,6 +26,8 @@ import java.util.Iterator;
 
 public class MapBuilder {
 	
+	private String input = "./tokenizer/tfidf-data/";
+	
 	private ArrayList<HashMap<String,Integer>> mapList;
 	private HashMap<String, Integer> stats;
 
@@ -71,9 +73,9 @@ public class MapBuilder {
         
             }
         
-            // Access data from tokenizer
+            // Access data from input
             
-            File indir = new File("./tokenizer/tokens/");
+            File indir = new File(input);
             File[] files = indir.listFiles();
             
             // Cycle through data, building maps from positive, neutral, & negative files.
