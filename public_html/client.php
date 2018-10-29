@@ -31,8 +31,6 @@ $conn = "tcp://code.cis.uafs.edu:5000";
 echo "Conn: " . $conn . "</br>";
 $socket = stream_socket_client($conn, $errno, $errstr, 30);
 
-echo "HERE</br>";
-
 // Test the client socket
 if(!$socket)
 {
@@ -48,9 +46,12 @@ $in = $in . "\r\n";
 // Write message to server connection
 fwrite($socket, $in);
 
+// Notify the administrator that the client is receiving a message from the server
+echo "[Status] Receiving message from server connection";
+
 // Receive message from server connection
 $response = fread($socket, 1048);
-echo "Response: " + $response;
+echo "Response: " + $response + "</br>";
 
 // Notify the administrator that the connection is being closed
 echo "[Status] Closing connection</br>";
