@@ -36,6 +36,9 @@ public class NBServer
 			
 					// Define inClient as the inputStream of the client socket
 					BufferedReader inClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+					
+					// Define outClient as the outputStream of the client socket
+					PrintWriter outClient = new PrintWriter(clientSocket.getOutputStream(), true);
 			
 					// Notify the administrator that the server is reading input from the client
 					System.out.println("[Status] Receiving input from the client connection");
@@ -66,9 +69,6 @@ public class NBServer
 					//String neg = Double.toString(outSTO.getNeg());
 					//String output = outSTO.getClassifier() + "," + pos + "," + neu + "," + neg + ",\r\n";
 					String output = "positive,9.0,2.6,5.7,\r\n";
-				
-					// Define outClient as the outputStream of the client socket
-					PrintWriter outClient = new PrintWriter(clientSocket.getOutputStream(), true);
 				
 					// Write the output back to the client
 					outClient.write(output);

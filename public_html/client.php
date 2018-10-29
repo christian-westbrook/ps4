@@ -36,13 +36,14 @@ $in = $in . "\r\n";
 fwrite($socket, $in);
 
 // Notify the administrator that the client is receiving a message from the server
-echo "[Status] Receiving message from server connection";
+echo "[Status] Receiving message from server connection</br>";
 
 // Receive message from server connection
 $response = "";
+
 while(!feof($socket)) 
 {
-    $response = $response + fgets($socket, 1024);
+    $response = fread($socket, 4096);
 }
 if(!$response)
 {
