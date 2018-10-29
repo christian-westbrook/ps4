@@ -39,20 +39,7 @@ fwrite($socket, $in);
 echo "[Status] Receiving message from server connection</br>";
 
 // Receive message from server connection
-$response = "";
-
-while(!feof($socket)) 
-{
-    $response = fread($socket, 4096);
-}
-if(!$response)
-{
-	echo "[Error] Failed to receive message from server connection</br>";
-}
-else
-{
-	echo "[Status] Response: " + $response + "</br>";
-}
+echo fgets($socket, 4096);
 
 // Notify the administrator that the connection is being closed
 echo "[Status] Closing connection</br>";
