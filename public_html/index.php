@@ -17,7 +17,7 @@
 <body>
 	<div>
 	<form action="client.php" method="post">
-		Input:<br> 
+		<p id="input-label">Input:</p> 
 		<input type="text" name="input"><br>
 	
 		<input type="checkbox" name="NB" checked> Naive Bayes<br>
