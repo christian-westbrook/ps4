@@ -8,9 +8,9 @@ public class LR {
 	
 	public static STO calc(STO sto) {
 		
-		sto.setPos(calc(bigramPos, sto.getInput()));
-		sto.setNeg(calc(bigramNeg, sto.getInput()));
-		sto.setNeu(calc(bigramNeu, sto.getInput()));
+		sto.setPos(result(1, positive, sto.getInput()));
+		sto.setNeg(result(-1, negative, sto.getInput()));
+		sto.setNeu(result(0, neutral, sto.getInput()));
 		
 		sto.setClassifier(getClass(sto));
 		
@@ -34,7 +34,40 @@ public class LR {
 		}
 	}
 	
-	private double calc(HashMap<String, Double> hm, String input) {
+	public double result(int selection, HashMap<String, Double> hm, String input) {
+
+		double res = 0.0;
+
+		double a;
+		double b;
+		double c;
+		
+		double max;
+		
+		a = res(positve,input);
+		b = res(neutral,input);
+		c = res(negative,input);
+		
+		double d = a + b + c;
+
+		
+		if(selection == 0) {
+			
+			return (Math.exp(b) / Math.exp(d));
+			
+		} else if(selection == 1) {
+			
+			return (Math.exp(a) / Math.exp(d));
+			
+		} else {
+			
+			return (Math.exp(c) / Math.exp(d));
+			
+		}
+	
+}
+	
+	private double res(HashMap<String, Double> hm, String input) {
 		
 		double result = 0.0;
 		
