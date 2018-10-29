@@ -55,16 +55,17 @@ public class NBServer
 				
 					// Calculate sentiment
 					NB naiveBayes = new NB();
-					STO outSTO = naiveBayes.calc(inSTO);
+					//STO outSTO = naiveBayes.calc(inSTO);
 				
 					// Notify the administrator that the server is writing back to the client
 					System.out.println("[Status] Writing response to server");
 				
 					// Format results
-					String pos = Double.toString(outSTO.getPos());
-					String neu = Double.toString(outSTO.getNeu());
-					String neg = Double.toString(outSTO.getNeg());
-					String output = outSTO.getClassifier() + "," + pos + "," + neu + "," + neg + ",\r\n";
+					//String pos = Double.toString(outSTO.getPos());
+					//String neu = Double.toString(outSTO.getNeu());
+					//String neg = Double.toString(outSTO.getNeg());
+					//String output = outSTO.getClassifier() + "," + pos + "," + neu + "," + neg + ",\r\n";
+					String output = "positive,9.0,2.6,5.7,\r\n";
 				
 					// Define outClient as the outputStream of the client socket
 					PrintWriter outClient = new PrintWriter(clientSocket.getOutputStream(), true);
