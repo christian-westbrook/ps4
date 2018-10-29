@@ -54,7 +54,7 @@ public class NBServer
 					inSTO.setInput(input);
 				
 					// Calculate sentiment
-					NB naiveBayes = new NB();
+					//NB naiveBayes = new NB();
 					//STO outSTO = naiveBayes.calc(inSTO);
 				
 					// Notify the administrator that the server is writing back to the client
