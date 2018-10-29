@@ -27,16 +27,13 @@ $port = "5000";
 echo "[Status] Creating client socket\n";
 
 // Create the client socket
-$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-
-echo "HERE";
-
-// Test the client socket
-if($socket === false)
+if ($socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) === false)
 {
 	echo "socket_create() failed.\n";
 	echo socket_strerror(socket_last_error()) . "\n";
 }
+
+echo "HERE";
 
 // Notify the administrator that the client is attempting to connect to the server
 echo "[Status] Attempting connection to server\n";
