@@ -27,7 +27,7 @@ $port = "5000";
 echo "[Status] Creating client socket</br>";
 
 // Create the client socket
-$conn = "tcp:" . "code.cis.uafs.edu" . ":" . $port;
+$conn = "tcp://code.cis.uafs.edu:5000";
 echo "Conn: " . $conn . "</br>";
 $socket = stream_socket_client($conn, $errno, $errstr, 30);
 
