@@ -1,19 +1,40 @@
 body
 {
-	background: #3a3a3a;
+	background: #034f84;
+	color: white;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+h1
+{
+	margin: auto;
+	text-align: center;
+	margin-bottom: 1em;
 }
 
 #formdiv
 {
 	margin: auto;
-	width: 30%;
+	width: 25%;
 	border: 3px solid black;
-	padding: 0.5em;
-	padding-bottom: 0em;
-	background: #fff68f;
+	border-radius: 20px;
+	padding: 0.25em;
+	background: #91a8d1;
+	color: black;
+	padding-top: 1em;
+	padding-left: 1em;
 }
 
 input
 {
 	padding: 0.25em;
+	margin: 0.15em;
+	text-align: center;
+}
+
+p
+{
+	text-align: center;
+	margin: auto;
+	margin-top: 1em;
 }

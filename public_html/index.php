@@ -19,7 +19,7 @@
 	<div id="formdiv">
 	<form action="client.php" method="post">
 		<div id="inputdiv">
-		Input:
+		Input
 		<input type="text" name="input"><br>
 		</div>
 	
