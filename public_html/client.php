@@ -28,7 +28,7 @@ if(!$socket)
 echo "[Status] Sending message to server connection</br>";
 
 // Append end of message to input message
-$in = $in . "\r\n";
+$in = $in . "\n";
 
 // Write message to server connection
 fwrite($socket, $in);
