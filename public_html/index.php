@@ -15,6 +15,7 @@
 </head>
 
 <body>
+	<div>
 	<form action="client.php" method="post">
 		Input:<br> 
 		<input type="text" name="input"><br>
@@ -24,6 +25,7 @@
 	
 		<input type="submit" value="Send">	
 	</form>
+	</div>
 </body>
 
 
