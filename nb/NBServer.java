@@ -55,13 +55,13 @@ public class NBServer
 				// Notify the administrator that the server is writing back to the client
 				
 				// Format results
-				String pos = Double.parseDouble(outSTO.getPos());
-				String neu = Double.parseDouble(outSTO.getNeu());
-				String neg = Double.parseDouble(outSTO.getNeg());
+				String pos = Double.toString(outSTO.getPos());
+				String neu = Double.toString(outSTO.getNeu());
+				String neg = Double.toString(outSTO.getNeg());
 				String output = outSTO.getClassifier() + "," + pos + "," + neu + "," + neg + ",\r\n";
 				
 				// Define outClient as the outputStream of the client socket
-				outClient = new PrintWriter(clientSocket.getOutputStream(), true);
+				PrintWriter outClient = new PrintWriter(clientSocket.getOutputStream(), true);
 				
 				// Write the output back to the client
 				outClient.write(output);
