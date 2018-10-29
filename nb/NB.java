@@ -1,3 +1,5 @@
+package nb;
+
 import java.util.HashMap;
 
 public class NB {

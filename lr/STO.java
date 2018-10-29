@@ -1,3 +1,5 @@
+package lr;
+
 public class STO 
 {
 	private String input;

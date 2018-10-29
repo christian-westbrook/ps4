@@ -1,3 +1,5 @@
+package nb;
+
 public class STO 
 {
 	private String input;
