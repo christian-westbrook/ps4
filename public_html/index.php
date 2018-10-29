@@ -15,10 +15,12 @@
 </head>
 
 <body>
-	<div>
+	<div id="formdiv">
 	<form action="client.php" method="post">
-		<p id="input-label">Input:</p> 
+		<div id="inputdiv">
+		Input:
 		<input type="text" name="input"><br>
+		</div>
 	
 		<input type="checkbox" name="NB" checked> Naive Bayes<br>
 		<input type="checkbox" name="LR"> Logistic Regression<br>
