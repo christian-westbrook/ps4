@@ -40,7 +40,14 @@ echo "[Status] Receiving message from server connection";
 
 // Receive message from server connection
 $response = fread($socket, 1048);
-echo "[Status] Response: " + $response + "</br>";
+if(!$response)
+{
+	echo "[Error] Failed to receive message from server connection</br>";
+}
+else
+{
+	echo "[Status] Response: " + $response + "</br>";
+}
 
 // Notify the administrator that the connection is being closed
 echo "[Status] Closing connection</br>";
