@@ -29,14 +29,14 @@ public class NBServer
 				// Notify the administrator that a connection has been accepted
 				System.out.println("[Status] Accepted client connection at " + clientSocket.getLocalPort());
 			
-				// Define inServer as the inputStream of the client socket
-				BufferedReader inServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+				// Define inClient as the inputStream of the client socket
+				BufferedReader inClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			
 				// Notify the administrator that the server is reading input from the client
 				System.out.println("[Status] Receiving input from the client connection");
 			
 				// Read one line of input from the client connection
-				String input = inServer.readLine();
+				String input = inClient.readLine();
 			
 				// Notify the administrator that the message was received
 				System.out.println("[Status] Message received: " + input);
@@ -60,10 +60,19 @@ public class NBServer
 				String neg = Double.parseDouble(outSTO.getNeg());
 				String output = outSTO.getClassifier() + "," + pos + "," + neu + "," + neg + ",\r\n";
 				
-				// Define outServer as the outputStream of the client socket
-				outServer = new PrintWriter(clientSocket.getOutputStream(), true);
+				// Define outClient as the outputStream of the client socket
+				outClient = new PrintWriter(clientSocket.getOutputStream(), true);
 				
-				// Write the output 
+				// Write the output back to the client
+				outClient.write(output);
+				
+				// Notify the administrator that the server is closing the connection
+				System.out.println("[Status] Closing connection");
+				
+				// Close the client connection
+				inClient.close();
+				outClient.close();
+				clientSocket.close();
 			}
 			catch(ConnectException ex)
 			{
@@ -74,13 +83,9 @@ public class NBServer
 				ex.printStackTrace();
 			}
 		}
-		
-		// Notify the administrator that the server is closing the connection
-		System.out.println("[Status] Closing connection");
 			
-		// Close the sockets
+		// Close the server socket
 		serverSocket.close();
-		clientSocket.close();
 		
 		// Notify the administrator that the application is terminating
 		System.out.println("[Status] Terminating");
