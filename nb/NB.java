@@ -78,14 +78,14 @@ public class NB {
 		double prob = 0.0;
 		double prior = Math.log10(((double) sent[s]) / allSent);
             
-        int freq = 0;
+        	int freq = 0;
             
 		for(int i = 0; i < words.length; i++) {
         
 			tmp = words[i];
         
 			if(hm.get(tmp) != null) {
-                freq = hm.get(tmp);
+                		freq = hm.get(tmp);
 			}
 			
 			prob += Math.log10( ((double)( freq + 1 )) / (uniN[s] + allV) );
