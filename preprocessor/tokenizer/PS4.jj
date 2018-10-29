@@ -13,62 +13,39 @@ PARSER_BEGIN(PS4Tokenizer)
 
 import java.io.*;
 import java.util.Random;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 
 public class PS4Tokenizer {
-    
-    static HashMap <String, Integer> stats;
-    static int seed = 5000;
+
+    static String input;
+    static String cleanOutput = "./clean-data/";
     static boolean debug = false;
     static int allWords;
     static int allLines;
-    
+
 	public static void main(String[] args) throws ParseException, IOException {
 		
         if(args.length == 1) {
 
-            String[] dirNames = {"./tokens/","./stats/"};
+            input = args[0];
             
-            // Create directories for test data, training data, and stats.
+            // Create directories.
             
+            String[] dirNames = {cleanOutput};
             setupOutputDirs(dirNames);
  
             // Begin to tokenize each file.
             
-            File indir = new File(args[0]);
+            File indir = new File(input);
 			File[] files = indir.listFiles();
-            
-            stats = new HashMap<String, Integer>(files.length * 2);
 
             // Used to count the number of distinct words, and number of lines, accross all files.
-            
-            allWords = 0;
-            allLines = 0;
-            
+
 			for(File file : files) {
-				tokenize(file, "./tokens/");
+				tokenize(file, cleanOutput);
             }
 
-            // Write stats & sentence freq to disk.
-
-            File f = new File("./stats/stats.map");
-
-            f.createNewFile();
-            FileOutputStream fos = new FileOutputStream(f);
-            ObjectOutputStream foos = new ObjectOutputStream(fos);
-            foos.writeObject(stats);
-            foos.close();
-
-            File mFile = new File("./stats/stats.dat");
-			mFile.createNewFile();
-			BufferedWriter mbw = new BufferedWriter(new FileWriter(mFile));
-			mbw.write(allWords+"\n");
-            mbw.write(allLines+"\n");
-			mbw.close();
-
-            
 		} else {
 			System.out.println("ERROR: Invalid arguments specified\n");
 			System.out.println("Please run this program with the following syntax: java PS4Tokenizer.java <path of input dir>");
@@ -78,9 +55,11 @@ public class PS4Tokenizer {
 
     private static void setupOutputDirs(String[] dirNames) {
  
+        File dir;
+        
         for(int i = 0; i < dirNames.length; i++) {
          
-            File dir = new File(dirNames[i]);
+            dir = new File(dirNames[i]);
             
             if(!dir.exists()) {
                 dir.mkdir();
@@ -105,7 +84,7 @@ public class PS4Tokenizer {
 
   	private static void tokenize(File input, String outPath) throws ParseException, IOException {
         
-        String fileName = "train-"+input.getName()+".out";
+        String fileName = input.getName();
 
 		// Create training-data output
         
@@ -116,12 +95,8 @@ public class PS4Tokenizer {
 		PS4Tokenizer u = new PS4Tokenizer(br);
   		Token t;
         Token p = null;
-        
-        // Count the number of lines for each file, which is used in further calculations.
-        
         String key;
         boolean newline;
-        int count = 0;
 
 		do {
 
@@ -132,27 +107,20 @@ public class PS4Tokenizer {
             if(!newline) {
              
                 key = t.image.toLowerCase();
-                
-                if(key.length() > 0) {
-                 
-                    bw.write(key + "\n");
-                    
-                }
+                bw.write(key);
                 
             }
 
 			if(newline) {
 
-                // Count the number of lines in the file.
+                // Write non-empty new lines.
                 
                 if( p != null ) {
-                 
+
                     if(Character.isLetter(p.image.charAt(0))) {
-                        count++;
+                        bw.write(t.image);
                     }
 
-                } else {
-                    count++;
                 }
                 
             }
@@ -161,11 +129,6 @@ public class PS4Tokenizer {
 		
 		} while ( t.kind != PS4TokenizerConstants.EOF );
 
-        // Save file stats.
-        
-        allLines += count;
-        stats.put(fileName,count);
-        
   		br.close();
   		bw.close();
 
@@ -180,8 +143,7 @@ TOKEN_MGR_DECLS : {
 
 SKIP : {
 
-  < SPACE : (" "|"\\s")+ >
-| < TAB : ("\t")+ >
+ < TAB : ("\t")+ >
 | < CR : ("\r")+ >
 | < OPERATOR : ["+","-","*","/"]|("&gt;") >
 | < PUNCTUATION : (","|"?"|"!"|":"|"'"|"-"|"."|"&"|"/")+>
@@ -207,6 +169,7 @@ TOKEN : {
 
   < WORD2 : (["a"-"z","A"-"Z"])+"'"(["a"-"z","A"-"Z"])+ >
 | < WORD  : (["a"-"z","A"-"Z"])+ >
+| < SPACE : (" "|"\\s")+ >
 | < NEWLINE : ("\n"|("?"|"!"|"."))+ >
 | < MISC  : ~[] >
 

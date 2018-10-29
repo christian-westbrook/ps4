@@ -9,31 +9,31 @@ public interface PS4TokenizerConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int SPACE = 1;
+  int TAB = 1;
   /** RegularExpression Id. */
-  int TAB = 2;
+  int CR = 2;
   /** RegularExpression Id. */
-  int CR = 3;
+  int OPERATOR = 3;
   /** RegularExpression Id. */
-  int OPERATOR = 4;
+  int PUNCTUATION = 4;
   /** RegularExpression Id. */
-  int PUNCTUATION = 5;
+  int SPECIAL_ENTITY = 5;
   /** RegularExpression Id. */
-  int SPECIAL_ENTITY = 6;
+  int EMAIL = 6;
   /** RegularExpression Id. */
-  int EMAIL = 7;
+  int DOMAIN = 7;
   /** RegularExpression Id. */
-  int DOMAIN = 8;
+  int PHONE_NUMBER = 8;
   /** RegularExpression Id. */
-  int PHONE_NUMBER = 9;
+  int EQUATION = 9;
   /** RegularExpression Id. */
-  int EQUATION = 10;
+  int NUMBER = 10;
   /** RegularExpression Id. */
-  int NUMBER = 11;
+  int WORD2 = 11;
   /** RegularExpression Id. */
-  int WORD2 = 12;
+  int WORD = 12;
   /** RegularExpression Id. */
-  int WORD = 13;
+  int SPACE = 13;
   /** RegularExpression Id. */
   int NEWLINE = 14;
   /** RegularExpression Id. */
@@ -45,7 +45,6 @@ public interface PS4TokenizerConstants {
   /** Literal token values. */
   String[] tokenImage = {
     "<EOF>",
-    "<SPACE>",
     "<TAB>",
     "<CR>",
     "<OPERATOR>",
@@ -58,6 +57,7 @@ public interface PS4TokenizerConstants {
     "<NUMBER>",
     "<WORD2>",
     "<WORD>",
+    "<SPACE>",
     "<NEWLINE>",
     "<MISC>",
   };

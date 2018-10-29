@@ -8,9 +8,19 @@ import java.util.Map;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.Random;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashSet;
 
 public class TFIDF {
-
+    
+    static String input = "./clean-data/";
+    static String testOut = "./test-data/";
+    static String trainOut = "./train-data/";
+    static String tfidfOut = "./tfidf-data/";
+    static String statsOut = "./stats/";
+    
+    static HashMap <String, Integer> stats;
     static HashMap<String,HashMap<String,Double>> wordFreqTable;
     static HashMap<String,Double> wordFreq;
     static HashMap<String,Integer> sentFreq;
@@ -25,8 +35,12 @@ public class TFIDF {
     static String key;
         
     static int freq;
-    static int allLines = 0;
-    static int wordCount = 0;
+    static int allIDF; // Used for idf calculation
+    static int allSent; // Used for tf calcuation
+    static int allWords; // Used to count distinct words
+    static int allLines; // Used to count number of lines
+    static int count;
+    static int seed = 5000;
         
     static double tf;
     static double score;
@@ -40,32 +54,36 @@ public class TFIDF {
         sentFreq = new HashMap<String,Integer>();
         sent = new HashMap<String,Integer>();
         
-        // Create directories to separate test data from training data.
+        // Create directories.
+
+        String[] dirNames = {testOut,trainOut,tfidfOut,statsOut};
+        setupOutputDirs(dirNames);
         
-        File dir = new File("./test-data/");
-            
-        if(!dir.exists()) {
-            dir.mkdir();
-        }
-        
-        dir = new File("./train-data/");
-            
-        if(!dir.exists()) {
-            dir.mkdir();
-        }
+        // First gather metrics, then write separate files for test data and training data.
         
         gatherMetrics();
-   
-        // We'll use this directory to write files that that don't contain elminated words.
-   
-        dir = new File("./tfidf-data/");
-            
-        if(!dir.exists()) {
-            dir.mkdir();
-        }
-
         writeNewFiles();
+        
+        // Write stats & sentence freq to disk.
+        
+        writeMetrics();
    
+    }
+    
+    public static void setupOutputDirs(String[] dirNames) {
+ 
+        File dir;
+ 
+        for(int i = 0; i < dirNames.length; i++) {
+         
+            dir = new File(dirNames[i]);
+            
+            if(!dir.exists()) {
+                dir.mkdir();
+            }
+            
+        }
+        
     }
     
     public static void gatherMetrics() {
@@ -79,18 +97,21 @@ public class TFIDF {
             int roll = 0;
             int step = 1;
 
-            File f = new File("./input-data/");
+            File f = new File(input);
             File[] files = f.listFiles();
 
-            for(File fi : files) {
+            allIDF = 0;
+            allSent = 0;
             
+            for(File fi : files) {
+
                 fileName = "train-"+fi.getName();
             
                 wordFreqTable.put(fileName,new HashMap<String,Double>());
                 
                 br = new BufferedReader(new FileReader(fi));
-                test = new BufferedWriter(new FileWriter("./test-data/test-"+fi.getName()));
-                train = new BufferedWriter(new FileWriter("./train-data/"+fileName));
+                test = new BufferedWriter(new FileWriter(testOut+"test-"+fi.getName()));
+                train = new BufferedWriter(new FileWriter(trainOut+fileName));
    
                 while((read = br.readLine())!=null) {
                     
@@ -125,7 +146,7 @@ public class TFIDF {
                             
                             }
                             
-                            wordCount++;
+                            allSent++;
                             
                             // Write to training data.
                             train.write(spl[i]);
@@ -135,7 +156,7 @@ public class TFIDF {
                             }
                         
                         }
-                        
+
                         train.write("\n");
                     
                         // Calculate frequencies for all words in the sentence.
@@ -147,31 +168,40 @@ public class TFIDF {
                             pair = (Map.Entry)it.next();
                             key = (String)pair.getKey();
                     
-                            tf = (int)pair.getValue() / ((double)wordCount);
+                            tf = (int)pair.getValue() / ((double)allSent);
 
+                            // Sum the frequencies of the words of a sentence, for a given file.
+                            
                             if(wordFreqTable.get(fileName).get(key) == null) {
                      
                                 wordFreqTable.get(fileName).put(key,tf);
-                                sentFreq.put(key,1);
-                        
+  
                             } else {
                         
                                 tf += wordFreqTable.get(fileName).get(key);
                                 wordFreqTable.get(fileName).put(key,tf);
-                        
-                                // Calculate frequency for a word in a given sentence.
-                        
+
+                            }
+                            
+                            // Calculate frequency for a word across all sentences
+                            
+                            if(sentFreq.get(key) == null) {
+                            
+                                sentFreq.put(key,1);
+                                
+                            } else {
+                            
                                 freq = sentFreq.get(key);
                                 freq++;
                                 sentFreq.put(key,freq);
-                        
+                            
                             }
+                            
                         }
                     
                         sent.clear();
-                        wordCount = 0;
-                    
-                        allLines++;
+                        allSent = 0;
+                        allIDF++;
                     
                     }
                     
@@ -183,7 +213,7 @@ public class TFIDF {
                     }
 
                 }
-                
+
                 test.close();
                 train.close();
                 br.close();
@@ -201,17 +231,27 @@ public class TFIDF {
     
     public static void writeNewFiles() {
     
+        HashSet<String> distinct = new HashSet<>();
+    
         try {
 
-            File f = new File("./train-data/");
+            File f = new File(trainOut);
             File[] files = f.listFiles();
 
+            // Used to store metrics
+            
+            stats = new HashMap<String, Integer>(files.length * 2);
+            allWords = 0;
+            allLines = 0;
+            
             for(File fi : files) {
             
                 br = new BufferedReader(new FileReader(fi));
-                bw = new BufferedWriter(new FileWriter("./tfidf-data/"+fi.getName()));
+                bw = new BufferedWriter(new FileWriter(tfidfOut+fi.getName()));
                 
                 wordFreq = wordFreqTable.get(fi.getName());
+
+                count = 0;
                 
                 while((read = br.readLine())!=null) {
                     
@@ -221,25 +261,33 @@ public class TFIDF {
                         
                         tf = wordFreq.get(spl[i]);
                         
-                        score = tf * (int)Math.log10( ((double)allLines) / (int)sentFreq.get(spl[i]) );
+                        score = tf * (int)Math.log10( ((double)allIDF) / (int)sentFreq.get(spl[i]) );
                         
                         if(score > 0.05) {
                         
-                            bw.write(spl[i]);
+                            bw.write(spl[i]+"\n");
                             
-                            if(i < spl.length - 1) {
-                                bw.write(" ");
-                            }
-                            
+                        } else {
+                        
+                        
+                        
+                        }
+                        
+                        if(!distinct.contains(spl[i])) {
+                            distinct.add(spl[i]);
+                            allWords++;
                         }
 
-                        //System.out.println(spl[i] + " " + score);
-                        
                     }
                     
-                    bw.write("\n");
+                    count++;
                     
                 }
+                
+                // Save file stats.
+        
+                allLines += count;
+                stats.put(fi.getName(),count);
                 
                 bw.close();
                 br.close();
@@ -254,6 +302,33 @@ public class TFIDF {
 
         }
 
+    }
+    
+    public static void writeMetrics() {
+    
+    
+        try {
+        
+            File f = new File(statsOut+"stats.map");
+
+            f.createNewFile();
+            FileOutputStream fos = new FileOutputStream(f);
+            ObjectOutputStream foos = new ObjectOutputStream(fos);
+            foos.writeObject(stats);
+            foos.close();
+
+            f = new File(statsOut+"stats.dat");
+            f.createNewFile();
+            BufferedWriter mbw = new BufferedWriter(new FileWriter(f));
+            mbw.write(allWords+"\n");
+            mbw.write(allLines+"\n");
+            mbw.close();
+        
+        } catch(IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    
     }
 
 }
