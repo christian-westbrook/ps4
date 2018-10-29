@@ -84,9 +84,6 @@ public class NBServer
 				ex.printStackTrace();
 			}
 		}
-			
-		// Close the server socket
-		serverSocket.close();
 		
 		// Notify the administrator that the application is terminating
 		System.out.println("[Status] Terminating");
