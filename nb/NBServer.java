@@ -68,7 +68,7 @@ public class NBServer
 					//String neu = Double.toString(outSTO.getNeu());
 					//String neg = Double.toString(outSTO.getNeg());
 					//String output = outSTO.getClassifier() + "," + pos + "," + neu + "," + neg + ",\r\n";
-					String output = "positive,9.0,2.6,5.7,\r\n";
+					String output = "positive,9.0,2.6,5.7,\r\n\r\n";
 				
 					// Write the output back to the client
 					outClient.write(output);
