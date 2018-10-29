@@ -3,7 +3,7 @@
 // Tell the compiler to print any errors that occur
 error_reporting(E_ALL);
 
-// Notify the administrator that the server class is executing
+// Notify the administrator that the client class is executing
 echo "[Status] Initializing</br>";
 
 // Get the message to be sent
@@ -47,6 +47,10 @@ $in = $in . "\r\n";
 
 // Write message to server connection
 fwrite($socket, $in);
+
+// Receive message from server connection
+$response = fread($socket, 1048);
+echo "Response: " + $response;
 
 // Notify the administrator that the connection is being closed
 echo "[Status] Closing connection</br>";

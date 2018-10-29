@@ -15,7 +15,7 @@
 </head>
 
 <body>
-	<form action="server.php" method="post">
+	<form action="client.php" method="post">
 		Input:<br> 
 		<input type="text" name="input"><br>
 	
