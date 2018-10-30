@@ -16,7 +16,7 @@ public class NB {
 	
 	public NB(String access) {
 	
-		String head;
+		String head = "";
 		
 		if(access.equals("cl"))
 			head = "..";

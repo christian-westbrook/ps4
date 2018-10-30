@@ -10,7 +10,7 @@ public class LR {
 	
 	public LR(String access) {
 		
-		String head;
+		String head = "";
 		
 		if(access.equals("cl"))
 			head = "..";
