@@ -1,1 +1,13 @@
-not 1.0 
+not 2.0
+bad 3.0
+good 3.0
+better 3.0
+alright 5.0
+worse 3.0
+ok 5.0
+okay 5.0
+more 3.0
+might 3.0
+wish 3.0
+fine 5.0
+average 5.0
