@@ -130,4 +130,20 @@ public class LR {
     
 	}
 	
+	public static int testCalc(String input) {
+    
+		double a = result(0, input);
+		double b = result(1, input);
+		double c = result(2, input);
+
+		if(a > b && a > c) {
+			return 0;
+		} else if(c > a && c > b) {
+			return 1;
+		} else {
+			return 2;
+		}
+    
+	}
+	
 }

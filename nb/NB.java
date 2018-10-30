@@ -120,4 +120,20 @@ public class NB {
 		}
     
 	}
+	
+	public static int testCalc(String input) {
+    
+		double a = getProb(unigramPos,input,0);
+		double b = getProb(unigramNeu,input,1);
+		double c = getProb(unigramNeg,input,2);
+
+		if(a > b && a > c) {
+			return 0;
+		} else if(c > a && c > b) {
+			return 1;
+		} else {
+			return 2;
+		}
+    
+	}
 }

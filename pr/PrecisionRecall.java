@@ -9,18 +9,23 @@ import nb.NB;
 
 public class PrecisionRecall {
 
+    static NB n;
+    static LR l;
+
 	public static void main(String[] args) {
 	
-		NB n = new NB();
-		LR l = new LR();
+		n = new NB();
+		l = new LR();
 		int[][] nb = new int[3][3];
 		int[][] lr = new int[3][3];
 		
-		fillMatrixes("../preprocessor/tokenizer/test-data/positive.txt",nb,lr,0);
-		fillMatrixes("../preprocessor/tokenizer/test-data/neutral.txt",nb,lr,1);
-		fillMatrixes("../preprocessor/tokenizer/test-data/negative.txt",nb,lr,2);
+		fillMatrixes("../preprocessor/tokenizer/test-data/test-positive.txt",nb,lr,0);
+		fillMatrixes("../preprocessor/tokenizer/test-data/test-neutral.txt",nb,lr,1);
+		fillMatrixes("../preprocessor/tokenizer/test-data/test-negative.txt",nb,lr,2);
 
+		System.out.print("NB: ");
 		calcPrecisionRecall(nb);
+		System.out.print("LR: ");
 		calcPrecisionRecall(lr);
 		
 	}
@@ -40,11 +45,11 @@ public class PrecisionRecall {
 				
 				for(int i = 0; i < split.length; i++) {
 					
-					//res = nb.testCalc(split[i]);
-					//cm1[res][ind]++;
+					res = n.testCalc(split[i]);
+					cm1[res][ind]++;
 					
-					//res = lr.testCalc(split[i]);
-					//cm2[res][ind]++;
+					res = l.testCalc(split[i]);
+					cm2[res][ind]++;
 					
 				}
 				
@@ -81,6 +86,14 @@ public class PrecisionRecall {
 				
 				r += cm[k][i];
 				
+			}
+			
+			if(i == 0) {
+                System.out.print("Positive: ");
+			} else if(i == 1) {
+                System.out.print("Neutral: ");
+			} else {
+                System.out.print("Negative: ");
 			}
 			
 			System.out.println("Precision: "+((double)cm[i][i]) / p);
