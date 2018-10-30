@@ -60,7 +60,7 @@ public class Load {
             
             }
             
-            indir = new File("../preprocessor/data/metrics/");
+            indir = new File(path2);
             files = indir.listFiles();
             
             metricTable = new HashMap<String,ArrayList<Integer>>();
