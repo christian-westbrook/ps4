@@ -14,8 +14,8 @@ public class PrecisionRecall {
 
 	public static void main(String[] args) {
 	
-		n = new NB();
-		l = new LR();
+		n = new NB("cl");
+		l = new LR("cl");
 		int[][] nb = new int[3][3];
 		int[][] lr = new int[3][3];
 		
