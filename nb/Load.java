@@ -33,7 +33,7 @@ public class Load {
     
     private int seed = 30;
 
-    public Load() {
+    public Load(String head) {
         
         try {
             

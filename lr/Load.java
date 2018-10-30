@@ -30,12 +30,12 @@ public class Load {
     //String path1 = "../preprocessor/data/lr_maps/";
 	//String path2 = "./preprocessor/data/lr_maps/";
 	
-	String directory = head + "/preprocessor/data/lr_maps/";
-	
-	String directory = path2;
+	//String directory = path2;
 
-    public Load() {
+    public Load(String head) {
         
+		String directory = head + "/preprocessor/data/lr_maps/";
+		
         try {
             
             fis = new FileInputStream(directory+"positive.map");
