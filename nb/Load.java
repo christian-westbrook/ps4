@@ -37,8 +37,8 @@ public class Load {
         
         try {
             
-			String path1 = "../preprocessor/data/maps/");
-			String path2 = "./preprocessor/data/maps/");
+			String path1 = "../preprocessor/data/maps/";
+			String path2 = "./preprocessor/data/maps/";
 			
             File indir = new File(path2);
             File[] files = indir.listFiles();
