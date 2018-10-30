@@ -8,9 +8,16 @@ public class LR {
 	static HashMap<String, Double> neutral;	
 	static HashMap<String, Double> negative;
 	
-	public LR() {
+	public LR(String access) {
+		
+		String head;
+		
+		if(access.equals("cl"))
+			head = "..";
+		else if(access.equals("web"))
+			head = ".";
 	
-        Load l = new Load();
+        Load l = new Load(head);
         
         positive = l.getPosFeat();
         neutral = l.getNeuFeat();

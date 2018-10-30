@@ -14,9 +14,16 @@ public class NB {
 	static int[] uniN;
 	static int[] sent;
 	
-	public NB() {
+	public NB(String access) {
 	
-        Load l = new Load();
+		String head;
+		
+		if(access.equals("cl"))
+			head = "..";
+		else if(access.equals("web"))
+			head = ".";
+	
+        Load l = new Load(head);
         
         unigramPos = l.getPosUMap();
         unigramNeg = l.getNegUMap();

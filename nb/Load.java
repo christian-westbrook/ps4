@@ -37,11 +37,11 @@ public class Load {
         
         try {
             
-			String path1 = "../preprocessor/data/maps/";
-			String path2 = "./preprocessor/data/maps/";
-			String path3 = "./preprocessor/data/metrics";
+			//String path1 = "../preprocessor/data/maps/";
+			//String path2 = "./preprocessor/data/maps/";
+			//String path3 = "./preprocessor/data/metrics";
 			
-            File indir = new File(path2);
+            File indir = new File(head + "/preprocessor/data/maps/");
             File[] files = indir.listFiles();
             
             mapTable = new HashMap<String,HashMap<String,Integer>>(seed);
@@ -61,7 +61,7 @@ public class Load {
             
             }
             
-            indir = new File(path3);
+            indir = new File(head + "/preprocessor/data/metrics/");
             files = indir.listFiles();
             
             metricTable = new HashMap<String,ArrayList<Integer>>();

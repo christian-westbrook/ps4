@@ -27,8 +27,10 @@ public class Load {
     
     private int seed = 30;
     
-    String path1 = "../preprocessor/data/lr_maps/";
-	String path2 = "./preprocessor/data/lr_maps/";
+    //String path1 = "../preprocessor/data/lr_maps/";
+	//String path2 = "./preprocessor/data/lr_maps/";
+	
+	String directory = head + "/preprocessor/data/lr_maps/";
 	
 	String directory = path2;
 

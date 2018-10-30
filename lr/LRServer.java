@@ -59,7 +59,7 @@ public class LRServer
 					inSTO.setInput(input);
 				
 					// Calculate sentiment
-					LR logisticRegression = new LR();
+					LR logisticRegression = new LR("web");
 					STO outSTO = logisticRegression.calc(inSTO);
 				
 					// Notify the administrator that the server is writing back to the client

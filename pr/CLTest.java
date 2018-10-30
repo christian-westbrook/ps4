@@ -29,10 +29,10 @@ public class CLTest {
                 
                 // Print out the result from the NB getProb method.
                 
-                NB nb = new NB();
+                NB nb = new NB("cl");
                 nb.getAllProb(sb.toString());
                 
-                LR lr = new LR();
+                LR lr = new LR("cl");
                 lr.getAllProb(sb.toString());
                 
             
