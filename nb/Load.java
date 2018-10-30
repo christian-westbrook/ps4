@@ -37,7 +37,10 @@ public class Load {
         
         try {
             
-            File indir = new File("../preprocessor/data/maps/");
+			String path1 = "../preprocessor/data/maps/");
+			String path2 = "./preprocessor/data/maps/");
+			
+            File indir = new File(path2);
             File[] files = indir.listFiles();
             
             mapTable = new HashMap<String,HashMap<String,Integer>>(seed);
