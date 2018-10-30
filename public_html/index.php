@@ -23,8 +23,8 @@
 		<input type="text" name="input"><br>
 		</div>
 	
-		<input type="checkbox" name="NB"> Naive Bayes<br>
-		<input type="checkbox" name="LR"> Logistic Regression<br>
+		<input type="checkbox" name="NB" checked> Naive Bayes<br>
+		<input type="checkbox" name="LR" checked> Logistic Regression<br>
 	
 		<input type="submit" value="Send">	
 	</form>
