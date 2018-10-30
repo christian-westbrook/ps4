@@ -39,6 +39,7 @@ public class Load {
             
 			String path1 = "../preprocessor/data/maps/";
 			String path2 = "./preprocessor/data/maps/";
+			String path3 = "./preprocessor/data/metrics";
 			
             File indir = new File(path2);
             File[] files = indir.listFiles();
@@ -60,7 +61,7 @@ public class Load {
             
             }
             
-            indir = new File(path2);
+            indir = new File(path3);
             files = indir.listFiles();
             
             metricTable = new HashMap<String,ArrayList<Integer>>();
@@ -74,7 +75,7 @@ public class Load {
             
                 read = br.readLine();
                 tmp = read.split(",");
-
+				
                 metricList = new ArrayList<Integer>(3);
                 metricList.add(0,Integer.parseInt(tmp[0]));
                 metricList.add(1,Integer.parseInt(tmp[1]));
