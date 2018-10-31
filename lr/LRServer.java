@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ConnectException;
+import lr.STO;
 
 public class LRServer
 {
