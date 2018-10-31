@@ -17,13 +17,13 @@
 <body>
 	<h1>Sentiment Analyzer</h1>
 	<div id="formdiv">
-	<form action="#" method="post">
+	<form action="index.php" method="post">
 		<div id="inputdiv">
 		Input
 		<input type="text" name="input"><br>
 		</div>
 	
-		<input type="checkbox" name="NB" checked> Naive Bayes<br>
+		<input type="checkbox" name="NB"> Naive Bayes<br>
 		<input type="checkbox" name="LR"> Logistic Regression<br>
 	
 		<input type="submit" value="Send">	
