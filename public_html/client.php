@@ -32,7 +32,9 @@ if($nb)
 		$nb_response = $nb_response . fgets($socket, 4096);
 	}
 	
-	echo $nb_response . "</br>";
+	$nb_array = explode(",", $nb_response);
+	
+	print_r($nb_array) . "</br>";
 
 	// Close the socket
 	fclose($socket);
@@ -63,7 +65,9 @@ if($lr)
 		$lr_response = $lr_response . fgets($socket, 4096);
 	}
 	
-	echo $lr_response . "</br>";
+	$lr_array = explode(",", $lr_response);
+	
+	print_r($lr_array) . "</br>";
 
 	// Close the socket
 	fclose($socket);
