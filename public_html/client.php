@@ -26,9 +26,10 @@ if($nb)
 
 	// Receive message from server connection
 	echo "Response: ";
+	$nb_response = "";
 	while (!feof($socket)) 
 	{
-		$nb_response = fgets($socket, 4096);
+		$nb_response = $nb_response . fgets($socket, 4096);
 	}
 	
 	echo $nb_response . "</br>";
@@ -56,9 +57,10 @@ if($lr)
 
 	// Receive message from server connection
 	echo "Response: ";
+	$lr_response = "";
 	while (!feof($socket)) 
 	{
-		$lr_response = fgets($socket, 4096);
+		$lr_response = $lr_response . fgets($socket, 4096);
 	}
 	
 	echo $lr_response . "</br>";
