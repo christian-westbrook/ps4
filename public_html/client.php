@@ -28,9 +28,10 @@ if($nb)
 	echo "Response: ";
 	while (!feof($socket)) 
 	{
-		echo fgets($socket, 4096);
+		$nb_response = fgets($socket, 4096);
 	}
-	echo "</br>";
+	
+	echo $nb_response . "</br>";
 
 	// Close the socket
 	fclose($socket);
@@ -57,9 +58,10 @@ if($lr)
 	echo "Response: ";
 	while (!feof($socket)) 
 	{
-		echo fgets($socket, 4096);
+		$lr_response = fgets($socket, 4096);
 	}
-	echo "</br>";
+	
+	echo $lr_response . "</br>";
 
 	// Close the socket
 	fclose($socket);
