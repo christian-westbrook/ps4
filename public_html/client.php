@@ -1,17 +1,11 @@
 <?php
 
-include 'index.php';
-
 // Get the message to be sent
 $in = $_POST['input'];
 
 // Detect options
 $nb = $_POST['NB'];
 $lr = $_POST['LR'];
-
-// TEST
-echo $nb;
-echo $lr;
 
 if($nb)
 {

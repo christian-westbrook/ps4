@@ -17,7 +17,7 @@
 <body>
 	<h1>Sentiment Analyzer</h1>
 	<div id="formdiv">
-	<form action="client.php" method="post">
+	<form action="#" method="post">
 		<div id="inputdiv">
 		Input
 		<input type="text" name="input"><br>
@@ -29,6 +29,8 @@
 		<input type="submit" value="Send">	
 	</form>
 	</div>
+	
+	<?php include 'client.php'; ?>
 	
 	<p>Copyright (c) 2018 Renae Fisher, Anthony Todaro, and Christian Westbrook. All rights reserved.</p>
 </body>
