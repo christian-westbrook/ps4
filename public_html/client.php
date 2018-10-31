@@ -7,6 +7,8 @@ $in = $_POST['input'];
 $nb = $_POST['NB'];
 $lr = $_POST['LR'];
 
+echo "Sentence: " . $in . "</br></br>";
+
 if($nb)
 {
 	// Create the client socket
@@ -25,7 +27,6 @@ if($nb)
 	fwrite($socket, $in);
 
 	// Receive message from server connection
-	echo "Response: ";
 	$nb_response = "";
 	while (!feof($socket)) 
 	{
@@ -35,7 +36,7 @@ if($nb)
 	$nb_array = explode(",", $nb_response);
 	
 	echo '<p id="nbp">';
-	echo "Naive Bayes";
+	echo "Naive Bayes</br>";
 	echo "Classifier : " . $nb_array['0'] . "</br>";
 	echo "  Positive : " . $nb_array['1'] . "</br>";
 	echo "   Neutral : " . $nb_array['2'] . "</br>";
@@ -63,7 +64,6 @@ if($lr)
 	fwrite($socket, $in);
 
 	// Receive message from server connection
-	echo "Response: ";
 	$lr_response = "";
 	while (!feof($socket)) 
 	{
@@ -73,7 +73,7 @@ if($lr)
 	$lr_array = explode(",", $lr_response);
 	
 	echo '<p id="lrp">';
-	echo "Logistic Regression";
+	echo "Logistic Regression</br>";
 	echo "Classifier : " . $lr_array['0'] . "</br>";
 	echo "  Positive : " . $lr_array['1'] . "</br>";
 	echo "   Neutral : " . $lr_array['2'] . "</br>";
