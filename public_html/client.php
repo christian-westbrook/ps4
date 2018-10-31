@@ -7,7 +7,10 @@ $in = $_POST['input'];
 $nb = $_POST['NB'];
 $lr = $_POST['LR'];
 
-echo "<p>Sentence: " . $in . "</br></p></br>";
+if($in)
+{
+	echo "<p>Sentence: " . $in . "</br></p></br>";
+}
 
 if($nb)
 {
