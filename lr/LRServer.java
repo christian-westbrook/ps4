@@ -59,17 +59,18 @@ public class LRServer
 					inSTO.setInput(input);
 				
 					// Calculate sentiment
-					LR logisticRegression = new LR();
-					STO outSTO = logisticRegression.calc(inSTO);
+					//LR logisticRegression = new LR();
+					//STO outSTO = logisticRegression.calc(inSTO);
 				
 					// Notify the administrator that the server is writing back to the client
 					System.out.println("[Status] Writing response to server");
 				
 					// Format results
-					String pos = Double.toString(outSTO.getPos());
-					String neu = Double.toString(outSTO.getNeu());
-					String neg = Double.toString(outSTO.getNeg());
-					String output = outSTO.getClassifier() + "," + pos + "," + neu + "," + neg + ",\r\n";
+					//String pos = Double.toString(outSTO.getPos());
+					//String neu = Double.toString(outSTO.getNeu());
+					//String neg = Double.toString(outSTO.getNeg());
+					//String output = outSTO.getClassifier() + "," + pos + "," + neu + "," + neg + ",\r\n";
+					String output = "-- LR test message --";
 				
 					// Write the output back to the client
 					outClient.println(output);
