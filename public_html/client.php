@@ -1,5 +1,7 @@
 <?php
 
+include 'index.php';
+
 // Get the message to be sent
 $in = $_POST['input'];
 
