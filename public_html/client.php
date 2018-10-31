@@ -34,7 +34,12 @@ if($nb)
 	
 	$nb_array = explode(",", $nb_response);
 	
-	print_r($nb_array) . "</br>";
+	echo '<p id="nbp">';
+	echo "Naive Bayes";
+	echo "Classifier : " . $nb_array['0'] . "</br>";
+	echo "  Positive : " . $nb_array['1'] . "</br>";
+	echo "   Neutral : " . $nb_array['2'] . "</br>";
+	echo "  Negative : " . $nb_array['3'] . "</br></p></br>";
 
 	// Close the socket
 	fclose($socket);
@@ -67,7 +72,12 @@ if($lr)
 	
 	$lr_array = explode(",", $lr_response);
 	
-	print_r($lr_array) . "</br>";
+	echo '<p id="lrp">';
+	echo "Logistic Regression";
+	echo "Classifier : " . $lr_array['0'] . "</br>";
+	echo "  Positive : " . $lr_array['1'] . "</br>";
+	echo "   Neutral : " . $lr_array['2'] . "</br>";
+	echo "  Negative : " . $lr_array['3'] . "</br></p></br>";
 
 	// Close the socket
 	fclose($socket);
