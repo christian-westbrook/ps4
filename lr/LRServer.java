@@ -59,18 +59,17 @@ public class LRServer
 					inSTO.setInput(input);
 				
 					// Calculate sentiment
-					//LR logisticRegression = new LR();
-					//STO outSTO = logisticRegression.calc(inSTO);
+					LR logisticRegression = new LR();
+					STO outSTO = logisticRegression.calc(inSTO);
 				
 					// Notify the administrator that the server is writing back to the client
 					System.out.println("[Status] Writing response to server");
 				
 					// Format results
-					//String pos = Double.toString(outSTO.getPos());
-					//String neu = Double.toString(outSTO.getNeu());
-					//String neg = Double.toString(outSTO.getNeg());
-					//String output = outSTO.getClassifier() + "," + pos + "," + neu + "," + neg + ",";
-					String output = "positive,9.0,2.0,3.7,";
+					String pos = Double.toString(outSTO.getPos());
+					String neu = Double.toString(outSTO.getNeu());
+					String neg = Double.toString(outSTO.getNeg());
+					String output = outSTO.getClassifier() + "," + pos + "," + neu + "," + neg + ",";
 				
 					// Write the output back to the client
 					outClient.println(output);
