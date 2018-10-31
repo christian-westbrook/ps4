@@ -69,8 +69,8 @@ public class LRServer
 					//String pos = Double.toString(outSTO.getPos());
 					//String neu = Double.toString(outSTO.getNeu());
 					//String neg = Double.toString(outSTO.getNeg());
-					//String output = outSTO.getClassifier() + "," + pos + "," + neu + "," + neg + ",\r\n";
-					String output = "-- LR test message --";
+					//String output = outSTO.getClassifier() + "," + pos + "," + neu + "," + neg + ",";
+					String output = "positive,9.0,2.0,3.7,";
 				
 					// Write the output back to the client
 					outClient.println(output);
