@@ -7,7 +7,7 @@ $in = $_POST['input'];
 $nb = $_POST['NB'];
 $lr = $_POST['LR'];
 
-echo "Sentence: " . $in . "</br></br>";
+echo "<p>Sentence: " . $in . "</br></p></br>";
 
 if($nb)
 {
@@ -35,7 +35,7 @@ if($nb)
 	
 	$nb_array = explode(",", $nb_response);
 	
-	echo '<p id="nbp">';
+	echo '<p>';
 	echo "Naive Bayes</br>";
 	echo "Classifier : " . $nb_array['0'] . "</br>";
 	echo "  Positive : " . $nb_array['1'] . "</br>";
@@ -72,7 +72,7 @@ if($lr)
 	
 	$lr_array = explode(",", $lr_response);
 	
-	echo '<p id="lrp">';
+	echo '<p>';
 	echo "Logistic Regression</br>";
 	echo "Classifier : " . $lr_array['0'] . "</br>";
 	echo "  Positive : " . $lr_array['1'] . "</br>";
