@@ -29,15 +29,19 @@ public interface PS4TokenizerConstants {
   /** RegularExpression Id. */
   int NUMBER = 10;
   /** RegularExpression Id. */
-  int WORD2 = 11;
+  int WORD_SP0 = 11;
   /** RegularExpression Id. */
-  int WORD = 12;
+  int WORD_SP1 = 12;
   /** RegularExpression Id. */
-  int SPACE = 13;
+  int WORD_SP2 = 13;
   /** RegularExpression Id. */
-  int NEWLINE = 14;
+  int WORD = 14;
   /** RegularExpression Id. */
-  int MISC = 15;
+  int SPACE = 15;
+  /** RegularExpression Id. */
+  int NEWLINE = 16;
+  /** RegularExpression Id. */
+  int MISC = 17;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -55,7 +59,9 @@ public interface PS4TokenizerConstants {
     "<PHONE_NUMBER>",
     "<EQUATION>",
     "<NUMBER>",
-    "<WORD2>",
+    "<WORD_SP0>",
+    "<WORD_SP1>",
+    "<WORD_SP2>",
     "<WORD>",
     "<SPACE>",
     "<NEWLINE>",

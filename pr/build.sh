@@ -1,15 +1,17 @@
 #!/bin/bash
 
+rm -rf test-output
+
 cd ..
 
 cd preprocessor
 cd tokenizer
 
-./run.sh
+./run.sh '13'
 
 cd ..
 
-./run.sh
+./run.sh '13'
 
 cd ..
 

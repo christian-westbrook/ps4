@@ -76,11 +76,9 @@ public class Load {
                 read = br.readLine();
                 tmp = read.split(",");
 				
-                metricList = new ArrayList<Integer>(3);
+                metricList = new ArrayList<Integer>(2);
                 metricList.add(0,Integer.parseInt(tmp[0]));
                 metricList.add(1,Integer.parseInt(tmp[1]));
-                metricList.add(2,Integer.parseInt(tmp[2]));
-                
                 metricTable.put( lable, metricList );
                 
                 br.close();
@@ -117,11 +115,11 @@ public class Load {
     // Return V, the number of distinct words, & the number of lines in the original file.
 
     public int getAllV() {
-        return getArrayList("all 1").get(1);
+        return getArrayList("all 1").get(0);
     }
     
     public int getAllSent() {
-        return getArrayList("all 1").get(2);
+        return getArrayList("all 1").get(1);
     }
     
     // Return all N just for Unigrams.
@@ -141,15 +139,15 @@ public class Load {
     // Return sentence count.
 
     public int getPosSent() {
-        return getArrayList("positive 1").get(2);
+        return getArrayList("positive 1").get(1);
     }
     
     public int getNeuSent() {
-        return getArrayList("neutral 1").get(2);
+        return getArrayList("neutral 1").get(1);
     }
     
     public int getNegSent() {
-        return getArrayList("negative 1").get(2);
+        return getArrayList("negative 1").get(1);
     }
     
 }

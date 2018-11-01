@@ -1,8 +1,11 @@
 #!/bin/bash
 
+rm -rf data
+rm -rf ngrams
+
 javac *.java
 
-java MapBuilder
+java MapBuilder $1
 
 java FeatureBuilder
 

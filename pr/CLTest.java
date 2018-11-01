@@ -29,12 +29,17 @@ public class CLTest {
                 
                 // Print out the result from the NB getProb method.
                 
+                System.out.println();
+                
+                System.out.println("Naive Bayes Model:");
                 NB nb = new NB("cl");
                 nb.getAllProb(sb.toString());
                 
+                System.out.println("Logistic Regression Model:");
                 LR lr = new LR("cl");
                 lr.getAllProb(sb.toString());
                 
+                System.out.println();
             
             }
         

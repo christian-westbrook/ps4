@@ -1,9 +1,16 @@
-//=================================================================================================
-// Program		: PS4
-// Class		: Builder.java
-// Developer	: Christian Westbrook, Renae Fisher
-// Abstract		: This class is used to build HashMaps that are used for Naive Bayes classification
-//=================================================================================================
+//===============================================================
+// PROGRAM: MapBuilder.java
+// ASSIGNMENT: Problem Set 4
+// CLASS: Natural Language Processing
+// DATE: Nov 1 2018
+// AUTHOR: Renae Fisher
+// ABSTRACT: This class builds maps from tokens that were generated
+//  by the TFIDF program. It uses HashMaps to calculate frequencies 
+//  from n-grams, which are determined by the variable size.
+//  This program also gathers metrics from the TF-IDF application, 
+//  it calcuates some others, then it packages them for the runtime
+//  application.
+//===============================================================
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,9 +45,9 @@ public class MapBuilder {
 	private int[][] allMetrics;
 
     private int allLines;
-    private int allWords;
+    private int distinctWords;
 
-	private boolean debug = true;
+	static private boolean debug = false;
 
 	public MapBuilder(){
 
@@ -55,7 +62,7 @@ public class MapBuilder {
             ois.close();
             
             BufferedReader br = new BufferedReader(new FileReader("./tokenizer/stats/stats.dat"));
-            allWords = Integer.parseInt(br.readLine());
+            distinctWords = Integer.parseInt(br.readLine());
             allLines = Integer.parseInt(br.readLine());
             br.close();
             
@@ -73,68 +80,61 @@ public class MapBuilder {
         
             }
         
-            // Access data from input
+            // Access data from input & begin to build maps.
             
             File indir = new File(input);
             File[] files = indir.listFiles();
             
-            // Cycle through data, building maps from positive, neutral, & negative files.
-		
             String[] outputName;
-            allMetrics = new int[size][3];
-        
-            // NOTE : MAPS AND METRICS FILES ARE MADE NEW FOR EACH FILE, THEN OVERWRITTEN IN MEMORY.
-            // SIZE REFERS TO THE SIZE OF THE NGRAMS.
-        
+
             for(File file : files) {
         
-                // Create a list of maps for a partiuclar file, based on ngram size
+                // Create a new list of maps, the length of size, the number of ngrams.
                 
                 mapList = new ArrayList<HashMap<String,Integer>>(size);
 		
                 for(int i = 0; i < size; i++) {
-        
                     mapList.add(i,new HashMap<String,Integer>(seed));
-        
                 }
-            
-                // Create an array of metrics for a particular file
-                
-                classMetrics = new int[size][3];
-			
-                // Build maps
+
+                // Build maps.
 			
                 outputName = file.getName().split("\\.");
                 
                 mapBuilder(file, outputName[0]);
 
-                // Write the maps and metrics to disk.
+                // Create an array of metrics for each map.
+                
+                classMetrics = new int[size][2];
                 
                 for(int i = 0; i < mapList.size(); i++) {
 
                     writeMap( mapList.get(i), outputName[0]+"-"+(i+1) );
-                    classMetrics[i][2] = stats.get(file.getName());
+                    classMetrics[i][0] = stats.get(file.getName()+"-n");
+                    classMetrics[i][1] = stats.get(file.getName()+"-s");
                     writeMetrics( classMetrics[i], outputName[0]+"-metrics-"+(i+1) );
 			
                 }
                 
             }
             
-            // Write "universal" metrics, such as n, v, & total sentence count for prior.
+            // Write "all" metrics, such as n, v, & total sentence count.
+            // Sentence count is used for prior.
 
-            for(int i = 0; i < size; i++) {
-            
-                allMetrics[i][2] = allLines;
-                allMetrics[i][1] = allWords;
-                writeMetrics(allMetrics[i], "train-all-metrics-"+(i+1) );
-            
-            }
+            allMetrics = new int[1][2];
+            allMetrics[0][0] = distinctWords;
+            allMetrics[0][1] = allLines;
+            writeMetrics(allMetrics[0], "train-all-metrics-"+(1) );
         
         } catch(Exception ex) {
             ex.printStackTrace();
             System.exit(1);
         }
 
+	}
+	
+	private void buildDirectories() {
+	
 	}
 
     private void mapBuilder(File tokens, String outputName) {
@@ -146,33 +146,27 @@ public class MapBuilder {
 			BufferedReader br = new BufferedReader(new FileReader(tokens));
 			BufferedWriter bwTest[] = null;
 			
-			if(debug) {
-                
+			if(debug) {  
                 bwTest = new BufferedWriter[size];
                 
                 for(int i = 0; i < bwTest.length; i++) {
-                
                     bwTest[i] = new BufferedWriter(new FileWriter("./ngrams/"+outputName+"-"+(i+1)+".txt"));
-                
                 }
-                
 			}
             
-            // Use a queue to store previous words.
+            // Use a queue to store a section of words. Iterate through the lines of the token file.
             
             Queue<String> q = new LinkedList<>();
             int freq;
 
-			// Iterate through lines in the tokens file
-			
 			String line = "";
 			while((line = br.readLine()) != null) {
 
                 if(line.length() > 0) {
-                    
+      
                     q.add(line.toLowerCase());
                     
-                    // Discard words at the head of the queue if we exceed the size
+                    // Discard words at the head of the queue if we exceed the n-gram size.
                     
                     if(q.size() > size) {
             
@@ -180,12 +174,12 @@ public class MapBuilder {
             
                     }
             
-                    // Start to save ngrams when we have enough to build a full one
+                    // Start to save ngrams when we have enough to build a full one.
                     
                     if(q.size() == size) {
                 
                         StringBuilder sb = new StringBuilder();
-                        int len = 0;
+                        int len = 0; // Refers to n-gram, unigrams start at 0.
                 
                         for(String w : q) {
                 
@@ -198,7 +192,6 @@ public class MapBuilder {
                             if(mapList.get(len).get(sb.toString()) == null) {
 
                                 mapList.get(len).put(sb.toString(),1);
-                                classMetrics[len][1]++; //V
                     
                             } else {
                     
@@ -207,15 +200,10 @@ public class MapBuilder {
                                 mapList.get(len).put(sb.toString(),freq);
 
                             }
-                            
-                            classMetrics[len][0]++; //N
-                            allMetrics[len][0]++;
                 
                             if(debug) {
-                        
                                 bwTest[len].write(sb.toString());
                                 bwTest[len].write("\n");
-                        
                             }
 
                             len++;
@@ -230,13 +218,9 @@ public class MapBuilder {
             br.close();
     
             if(debug) {
-        
                 for(int i = 0; i < bwTest.length; i++) {
-                
                     bwTest[i].close();
-                
                 }
-        
             }
     
         } catch (FileNotFoundException ex) {
@@ -248,57 +232,6 @@ public class MapBuilder {
         }
     
     }
-
-    /*
-	public void TFIDF(HashMap<String, Integer> hm) throws IOException {
-	
-        BufferedWriter bw = null;
-        Iterator it = hm.entrySet().iterator();
-        String key;
-        double tf;
-        double score;
-        double alpha = 0.05;
-
-        if(debug) {
-
-            bw = new BufferedWriter(new FileWriter("./tf-idf.txt",true));
-            
-        }
-        
-        // Future idea: Store frequencies, select terms
-        // Occurence of term i in a document j * log( number of documents in collection / number of documents containing i )
-        
-        while(it.hasNext()) {
-        
-            Map.Entry pair = (Map.Entry)it.next();
-            key = (String)pair.getKey();
-            
-            tf = (double)wordFreq.get(key);
-
-            score = tf * (int)Math.log10( ((double)allLines) / (int)sentFreq.get(key) );
-            
-            if(debug) {
-            
-                bw.write(score + " " + key+"\n");
-            
-            }
-
-            //hm.put(key,(int)score);
-
-            it.remove();
-            
-            if(score < alpha) {
-                hm.remove(key);
-                // CONSIDER HOW THIS WOULD AFFECT METRICS, SUCH AS V, SENTENCE COUNT, ETC.
-            }
-
-        }
-        
-        if(debug){
-            bw.close();
-        }
-
-	}*/
 
 	private void writeMap(HashMap<String,Integer> hm, String outputName) {
 
@@ -360,7 +293,25 @@ public class MapBuilder {
     }
 
 	public static void main(String[] args) {
-		new MapBuilder();
+	
+        int tmp;
+    
+        if(args != null) {
+        
+            if(args.length == 1) {
+            
+                tmp = Integer.parseInt(args[0]);
+                
+                if(tmp == 13) {
+                    debug = true;
+                }
+            
+            }
+        
+        }
+	
+        new MapBuilder();
+
 	}
 
 }
